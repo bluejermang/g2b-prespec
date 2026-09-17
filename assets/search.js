@@ -100,24 +100,82 @@
     return copy.sort(byDefault);
   }
 
-  /** 'YYYY-MM-DD HH:MM:SS' → '9.16 11:01' (올해가 아니면 연도 포함) */
-  function formatDateTime(text, currentYear) {
-    const m = String(text || '').match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/);
-    if (!m) return '';
-    const date = `${+m[2]}.${+m[3]}`;
-    return `${Number(m[1]) === currentYear ? date : `${m[1]}.${date}`} ${m[4]}:${m[5]}`;
+  /**
+   * 검색창 자동완성 추천.
+   * 입력한 단어가 모두 들어 있는 수요기관·사업명을 고르고, 입력 전체로 시작하는 것 → 입력 전체를 포함하는 것 → 나머지 순으로 보여준다.
+   * 수요기관은 건수가 많은 순, 사업명은 최근 목록 순. 같은 사업명·수요기관이 여러 날짜에 있으면 최근 한 건만.
+   * @param {{ agencies: {name:string,count:number}[], titles: {title:string,agency:string,date:string}[] }} data
+   */
+  function suggest(data, query, { agencyLimit = 5, titleLimit = 8 } = {}) {
+    const q = String(query || '').trim().toLowerCase();
+    const words = q.split(/\s+/).filter(Boolean);
+    if (!words.length || !data) return { agencies: [], titles: [] };
+    const score = (text) => {
+      const t = String(text).toLowerCase();
+      if (!words.every((w) => t.includes(w))) return -1;
+      return t.startsWith(q) ? 0 : t.includes(q) ? 1 : 2;
+    };
+
+    const agencies = data.agencies
+      .map((a) => ({ a, s: score(a.name) }))
+      .filter((x) => x.s >= 0)
+      .sort((x, y) => x.s - y.s || y.a.count - x.a.count)
+      .slice(0, agencyLimit)
+      .map((x) => x.a);
+
+    const seen = new Set();
+    const titles = data.titles
+      .map((t) => ({ t, s: score(t.title) }))
+      .filter((x) => x.s >= 0)
+      .sort((x, y) => x.s - y.s || y.t.date.localeCompare(x.t.date))
+      .filter((x) => {
+        const key = `${x.t.title}${x.t.agency}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .slice(0, titleLimit)
+      .map((x) => x.t);
+    return { agencies, titles };
   }
 
-  /** 만원 단위 숫자 → "1억3,200만원" */
+  /** 추천 항목에서 입력한 단어 부분을 표시하기 위해 [{ text, match }] 조각으로 나눈다. */
+  function highlight(text, query) {
+    const source = String(text ?? '');
+    const lower = source.toLowerCase();
+    const words = String(query || '').trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const marks = new Array(source.length).fill(false);
+    for (const word of words) {
+      for (let i = lower.indexOf(word); i >= 0; i = lower.indexOf(word, i + word.length)) {
+        for (let j = i; j < i + word.length; j += 1) marks[j] = true;
+      }
+    }
+    const parts = [];
+    for (let i = 0; i < source.length; i += 1) {
+      const last = parts[parts.length - 1];
+      if (last && last.match === marks[i]) last.text += source[i];
+      else parts.push({ text: source[i], match: marks[i] });
+    }
+    return parts;
+  }
+
+  /** 'YYYY-MM-DD HH:MM:SS' → 'YY-MM-DD HH:MM' (예: 26-09-16 11:01) */
+  function formatDateTime(text) {
+    const m = String(text || '').match(/^\d{2}(\d{2})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/);
+    return m ? `${m[1]}-${m[2]}-${m[3]} ${m[4]}:${m[5]}` : '';
+  }
+
+  /** 만원 단위 숫자 → "1억 3,200만원" (억과 만 단위 사이 한 칸) */
   function formatManwon(man) {
     if (man === null || man === undefined) return '';
     const eok = Math.floor(man / 10000);
     const rest = man % 10000;
     if (eok === 0) return `${rest.toLocaleString('ko-KR')}만원`;
-    return rest === 0 ? `${eok.toLocaleString('ko-KR')}억원` : `${eok.toLocaleString('ko-KR')}억${rest.toLocaleString('ko-KR')}만원`;
+    return rest === 0 ? `${eok.toLocaleString('ko-KR')}억원` : `${eok.toLocaleString('ko-KR')}억 ${rest.toLocaleString('ko-KR')}만원`;
   }
 
   root.G2bSearch = {
-    emptyCriteria, toHash, fromHash, viewFromHash, datesInRange, matches, sortItems, formatDateTime, formatManwon, toNumberOrNull,
+    emptyCriteria, toHash, fromHash, viewFromHash, datesInRange, matches, sortItems, suggest, highlight,
+    formatDateTime, formatManwon, toNumberOrNull,
   };
 })(typeof window !== 'undefined' ? window : globalThis);

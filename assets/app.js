@@ -2,7 +2,8 @@
   const S = window.G2bSearch;
   const $ = (id) => document.getElementById(id);
   const WEEKDAYS = '일월화수목금토';
-  const CURRENT_YEAR = new Date().getFullYear();
+  /** 카드의 [배정]에서 고르는 값. "미정"은 배정을 해제한다. */
+  const UNASSIGNED = 'none';
 
   const els = {
     updated: $('updated'), adminBadge: $('admin-badge'), settingsLink: $('settings-link'),
@@ -26,6 +27,7 @@
     staffOptions: $('staff-options'), staffOptionsEmpty: $('staff-options-empty'), assignMessage: $('assign-message'),
     assignError: $('assign-error'), assignSubmit: $('assign-submit'),
     confirmDialog: $('confirm-dialog'), confirmTitle: $('confirm-title'), confirmDesc: $('confirm-desc'), confirmOk: $('confirm-ok'),
+    suggest: $('suggest-list'),
     toast: $('toast'),
   };
 
@@ -43,7 +45,7 @@
     selected: new Set(), // 사전규격등록번호
     customBudget: false,
   };
-  const cache = { lists: new Map(), deliveries: null };
+  const cache = { lists: new Map(), deliveries: null, suggest: null };
   let searchToken = 0;
 
   // ---------- 공통 ----------
@@ -217,6 +219,102 @@
     return nodes;
   }
 
+  // ---------- 카드 [배정] ----------
+
+  /** 공개일시 아래: 관리 모드는 [배정] 버튼, 공유 사이트는 배정된 담당자 표시 */
+  function assignControl(item) {
+    const names = item.assignees.map((a) => a.name).join(', ');
+    if (!state.admin) {
+      return names ? el('span', { className: 'assigned', title: '배정된 담당자' }, [icon('user'), el('span', { text: names })]) : null;
+    }
+    const button = el('button', {
+      type: 'button', className: `assign-btn${names ? ' has-assignee' : ''}`, 'aria-haspopup': 'dialog',
+      title: names ? '담당자 바꾸기' : '담당자 배정',
+    }, names ? [icon('user'), el('span', { text: names })] : [el('span', { text: '배정' })]);
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      openAssignPopover(item, button);
+    });
+    return button;
+  }
+
+  function closeAssignPopover() {
+    document.querySelector('.assign-pop')?.remove();
+    document.removeEventListener('mousedown', onPopoverOutside, true);
+    document.removeEventListener('keydown', onPopoverKeydown, true);
+  }
+
+  function onPopoverOutside(event) {
+    const pop = document.querySelector('.assign-pop');
+    if (pop && !pop.contains(event.target) && !event.target.closest('.assign-btn')) closeAssignPopover();
+  }
+
+  function onPopoverKeydown(event) {
+    if (event.key === 'Escape') {
+      event.stopPropagation();
+      closeAssignPopover();
+    }
+  }
+
+  function openAssignPopover(item, button) {
+    const wasOpenForThis = document.querySelector(`.assign-pop[data-no="${item.bfSpecRgstNo}"]`);
+    closeAssignPopover();
+    if (wasOpenForThis) return; // 같은 버튼을 다시 누르면 닫기
+
+    const select = el('select', { 'aria-label': '담당자 선택' }, [
+      el('option', { value: '', text: '선택', disabled: true, selected: true }),
+      ...state.adminStaff.map((s) => el('option', { value: String(s.id), text: s.name })),
+      el('option', { value: UNASSIGNED, text: '미정' }),
+    ]);
+    const message = el('input', { type: 'text', maxlength: '200', placeholder: '간단한 지시사항 (선택)', 'aria-label': '지시사항' });
+    const error = el('p', { className: 'form-error', hidden: true });
+    const submit = el('button', { type: 'submit', className: 'btn primary small' }, [icon('send'), el('span', { text: '전달' })]);
+    const cancel = el('button', { type: 'button', className: 'btn ghost small', text: '취소' });
+    const current = item.assignees.map((a) => a.name).join(', ');
+
+    const pop = el('form', { className: 'assign-pop', role: 'dialog', 'aria-label': `${item.title} 담당자 배정`, 'data-no': item.bfSpecRgstNo }, [
+      el('p', { className: 'assign-pop-title', text: current ? `현재 담당: ${current}` : '담당자 배정' }),
+      el('label', { className: 'assign-pop-field' }, [el('span', { text: '담당자' }), select]),
+      el('label', { className: 'assign-pop-field' }, [el('span', { text: '지시사항' }), message]),
+      error,
+      el('div', { className: 'assign-pop-actions' }, [cancel, submit]),
+    ]);
+    message.addEventListener('keydown', (event) => { if (event.key === 'Enter' && event.isComposing) event.preventDefault(); });
+    cancel.addEventListener('click', closeAssignPopover);
+    pop.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!select.value) {
+        error.textContent = '담당자를 선택하세요.';
+        error.hidden = false;
+        select.focus();
+        return;
+      }
+      const unassign = select.value === UNASSIGNED;
+      const staff = state.adminStaff.find((s) => String(s.id) === select.value);
+      submit.disabled = true;
+      try {
+        await postJson(`api/items/${encodeURIComponent(item.bfSpecRgstNo)}/assign`, {
+          staffId: unassign ? null : Number(select.value), message: message.value,
+        });
+        closeAssignPopover();
+        showToast(unassign
+          ? '배정을 해제했습니다 (미정) · 잠시 후 공유 사이트에 반영됩니다'
+          : `${staff?.name ?? ''}님에게 배정했습니다 · 잠시 후 공유 사이트에 반영됩니다`);
+        await reloadData();
+      } catch (err) {
+        error.textContent = err.message;
+        error.hidden = false;
+        submit.disabled = false;
+      }
+    });
+
+    button.closest('.card').append(pop);
+    pop.style.top = `${button.offsetTop + button.offsetHeight + 6}px`; // [배정] 버튼 바로 아래
+    document.addEventListener('mousedown', onPopoverOutside, true);
+    document.addEventListener('keydown', onPopoverKeydown, true);
+    select.focus();
+  }
+
   /**
    * @param {object} item
    * @param {number} number 카드 왼쪽 번호
@@ -240,12 +338,12 @@
       el('span', { className: 'badge type', text: item.businessType }),
       el('span', { className: 'agency', text: item.agency }),
       showDate ? el('span', { className: 'muted', text: `${dateLabel(item.listDate)} 목록` }) : null,
-      ...item.assignees.map((a) => el('span', { className: 'badge assignee', title: '배정된 담당자' }, [icon('user'), el('span', { text: a.name })])),
     ]);
 
     const side = el('div', { className: 'card-side' }, [
       el('span', { className: 'budget', text: item.budgetText }),
-      el('span', { className: 'published', title: '사전규격 공개일시', text: `공개 ${S.formatDateTime(item.publishedAt, CURRENT_YEAR)}` }),
+      el('span', { className: 'published', title: '사전규격 공개일시', text: `공개 ${S.formatDateTime(item.publishedAt)}` }),
+      assignControl(item),
     ]);
 
     const title = el('h3', { className: 'card-title' },
@@ -360,12 +458,134 @@
     typingTimer = setTimeout(search, 220);
   }
 
+  // ---------- 검색어 자동완성 ----------
+
+  const suggestState = { items: [], active: -1, query: '' };
+
+  function loadSuggest() {
+    cache.suggest ??= getJson('data/suggest.json').catch(() => ({ agencies: [], titles: [] }));
+    return cache.suggest;
+  }
+
+  function closeSuggest() {
+    els.suggest.hidden = true;
+    els.suggest.replaceChildren();
+    els.q.setAttribute('aria-expanded', 'false');
+    els.q.removeAttribute('aria-activedescendant');
+    suggestState.items = [];
+    suggestState.active = -1;
+  }
+
+  function setSuggestActive(index) {
+    const options = els.suggest.querySelectorAll('[role="option"]');
+    suggestState.active = index;
+    options.forEach((option, i) => option.setAttribute('aria-selected', String(i === index)));
+    if (index >= 0 && options[index]) {
+      els.q.setAttribute('aria-activedescendant', options[index].id);
+      options[index].scrollIntoView({ block: 'nearest' });
+    } else {
+      els.q.removeAttribute('aria-activedescendant');
+    }
+  }
+
+  const marked = (text, query) => S.highlight(text, query)
+    .map((part) => (part.match ? el('mark', { text: part.text }) : document.createTextNode(part.text)));
+
+  async function updateSuggest() {
+    const query = els.q.value;
+    suggestState.query = query;
+    if (!query.trim() || state.view !== 'all') {
+      closeSuggest();
+      return;
+    }
+    const data = await loadSuggest();
+    if (suggestState.query !== query || document.activeElement !== els.q) return; // 그사이 입력이 바뀜
+
+    const { agencies, titles } = S.suggest(data, query);
+    const items = [...agencies.map((a) => ({ type: 'agency', ...a })), ...titles.map((t) => ({ type: 'title', ...t }))];
+    if (!items.length) {
+      closeSuggest();
+      return;
+    }
+
+    const nodes = [];
+    items.forEach((item, i) => {
+      if (i === 0 && item.type === 'agency') nodes.push(el('div', { className: 'suggest-group', role: 'presentation', text: '수요기관 · 전체 기간에서 보기' }));
+      if (item.type === 'title' && (i === 0 || items[i - 1].type !== 'title')) {
+        nodes.push(el('div', { className: 'suggest-group', role: 'presentation', text: '사업명 · 해당 날짜 목록으로 이동' }));
+      }
+      const content = item.type === 'agency'
+        ? [icon('building'), el('span', { className: 'suggest-main' }, marked(item.name, query)), el('span', { className: 'suggest-meta', text: `${item.count}건` })]
+        : [icon('file'), el('span', { className: 'suggest-main' }, marked(item.title, query)),
+          el('span', { className: 'suggest-meta', text: `${item.agency} · ${dateLabel(item.date)}` })];
+      const option = el('div', { role: 'option', id: `suggest-${i}`, className: `suggest-option ${item.type}`, 'aria-selected': 'false' }, content);
+      option.addEventListener('mousedown', (event) => event.preventDefault()); // 누르는 동안 입력창 포커스 유지
+      option.addEventListener('click', () => chooseSuggestion(item));
+      option.addEventListener('mousemove', () => { if (suggestState.active !== i) setSuggestActive(i); });
+      nodes.push(option);
+    });
+
+    suggestState.items = items;
+    suggestState.active = -1;
+    els.suggest.replaceChildren(...nodes);
+    els.suggest.hidden = false;
+    els.q.setAttribute('aria-expanded', 'true');
+    els.q.removeAttribute('aria-activedescendant');
+  }
+
+  /** 수요기관을 고르면 전체 기간에서, 사업명을 고르면 그 공고가 올라온 날짜 목록에서 찾는다. */
+  function chooseSuggestion(item) {
+    const c = state.criteria;
+    if (item.type === 'agency') {
+      c.q = item.name;
+      state.period = 'all';
+      c.to = state.dates[0];
+      c.from = state.dates[state.dates.length - 1];
+    } else {
+      c.q = item.title;
+      state.period = 'day';
+      if (state.dates.includes(item.date)) c.from = c.to = item.date;
+    }
+    els.q.value = c.q;
+    closeSuggest();
+    clearTimeout(typingTimer);
+    search();
+  }
+
+  function onSearchKeydown(event) {
+    // 한글 조합 중 Enter는 글자 확정용이므로 추천을 고르지 않는다. (↑↓는 조합 중에도 추천 이동)
+    if ((event.isComposing || event.keyCode === 229) && !/^Arrow(Up|Down)$/.test(event.key)) return;
+    const open = !els.suggest.hidden && suggestState.items.length > 0;
+    const count = suggestState.items.length;
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      if (open) setSuggestActive((suggestState.active + 1) % count); else updateSuggest();
+    } else if (event.key === 'ArrowUp' && open) {
+      event.preventDefault();
+      setSuggestActive(suggestState.active <= 0 ? count - 1 : suggestState.active - 1);
+    } else if (event.key === 'Enter') {
+      if (open && suggestState.active >= 0) {
+        event.preventDefault();
+        chooseSuggestion(suggestState.items[suggestState.active]);
+      } else {
+        closeSuggest();
+      }
+    } else if (event.key === 'Escape' && open) {
+      event.preventDefault();
+      event.stopPropagation(); // 검색어 지우기(Esc)보다 추천 닫기가 먼저
+      closeSuggest();
+    } else if (event.key === 'Tab') {
+      closeSuggest();
+    }
+  }
+
   // ---------- 담당자별 ----------
 
+  /** 담당자 순서는 관리자 화면에 입력한 순서 (index.json이 그 순서로 온다) */
   function staffList() {
     const byId = new Map((state.index?.staff ?? []).map((s) => [s.id, { ...s }]));
     for (const s of state.adminStaff) if (!byId.has(s.id)) byId.set(s.id, { id: s.id, name: s.name, count: 0 });
-    return [...byId.values()].sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+    return [...byId.values()];
   }
 
   async function renderStaffView() {
@@ -406,7 +626,7 @@
     els.deliveries.replaceChildren(...deliveries.map((d) => {
       const head = el('header', { className: 'delivery-head' }, [
         el('div', { className: 'delivery-info' }, [
-          el('strong', { text: `${S.formatDateTime(d.createdAt, CURRENT_YEAR)} 전달` }),
+          el('strong', { text: `${S.formatDateTime(d.createdAt)} 전달` }),
           el('span', { className: 'muted', text: ` · 담당 ${d.staff.map((s) => s.name).join(', ')} · ${d.items.length}건` }),
         ]),
       ]);
@@ -434,6 +654,7 @@
     if (state.view === view) return;
     state.view = view;
     state.selected.clear();
+    closeSuggest();
     for (const tab of els.viewTabs) {
       if (tab.dataset.view === view) tab.setAttribute('aria-current', 'page'); else tab.removeAttribute('aria-current');
     }
@@ -619,7 +840,7 @@
     confirmAction({
       title: '전달을 취소할까요?',
       desc: [
-        el('strong', { className: 'confirm-target', text: `${S.formatDateTime(delivery.createdAt, CURRENT_YEAR)} · ${delivery.staff.map((s) => s.name).join(', ')} · ${delivery.items.length}건` }),
+        el('strong', { className: 'confirm-target', text: `${S.formatDateTime(delivery.createdAt)} · ${delivery.staff.map((s) => s.name).join(', ')} · ${delivery.items.length}건` }),
         el('span', { text: '이 전달로 배정된 공고와 전달한 말이 담당자 화면에서 사라집니다. 공고 자체는 목록에 남습니다.' }),
       ],
       okText: '전달 취소',
@@ -676,6 +897,7 @@
   async function reloadData() {
     cache.lists.clear();
     cache.deliveries = null;
+    cache.suggest = null;
     const [index, admin] = await Promise.all([getJson('data/index.json'), getJson('data/admin.json')]);
     state.index = index;
     state.adminStaff = admin.staff ?? [];
@@ -719,7 +941,10 @@
     els.from.addEventListener('change', () => { c().from = els.from.value; search(); });
     els.to.addEventListener('change', () => { c().to = els.to.value; search(); });
 
-    els.q.addEventListener('input', () => { c().q = els.q.value.trim(); searchSoon(); });
+    els.q.addEventListener('input', () => { c().q = els.q.value.trim(); searchSoon(); updateSuggest(); });
+    els.q.addEventListener('keydown', onSearchKeydown);
+    els.q.addEventListener('focus', () => { loadSuggest(); if (els.q.value.trim()) updateSuggest(); });
+    els.q.addEventListener('blur', () => setTimeout(() => { if (document.activeElement !== els.q) closeSuggest(); }, 120));
     for (const chip of els.typeChips) {
       chip.addEventListener('click', () => {
         const t = chip.dataset.type;
