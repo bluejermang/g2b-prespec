@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>나라장터 사전규격 알림</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-inner">
+      <div>
+        <h1>나라장터 사전규격 알림</h1>
+        <p class="updated" id="updated">불러오는 중…</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="toolbar" aria-label="목록 도구">
+      <label class="date-pick">
+        <span>목록 날짜</span>
+        <select id="date-select" disabled></select>
+      </label>
+      <div class="toolbar-actions">
+        <span class="summary" id="summary"></span>
+        <button type="button" id="copy-button" class="btn primary" disabled>선택 항목 복사</button>
+        <a id="excel-link" class="btn" href="#" aria-disabled="true">엑셀 다운로드</a>
+      </div>
+    </section>
+
+    <p class="hint">복사하면 <code>수요기관명 - 사업명 (예산) -&gt; 본공고</code> 형식으로, 사업명에 나라장터 링크가 걸린 채 복사됩니다.</p>
+
+    <div class="table-scroll">
+      <table class="list" id="list">
+        <thead>
+          <tr>
+            <th class="col-check"><input type="checkbox" id="check-all" aria-label="전체 선택" checked></th>
+            <th class="col-no">번호</th>
+            <th>수요기관</th>
+            <th>사업명</th>
+            <th class="col-num">예산</th>
+            <th>업무구분</th>
+            <th>의견마감</th>
+            <th>본공고</th>
+            <th>첨부</th>
+          </tr>
+        </thead>
+        <tbody id="list-body"></tbody>
+      </table>
+    </div>
+    <p class="empty" id="empty" hidden>이 날짜에는 조건에 맞는 공고가 없습니다.</p>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="assets/app.js"></script>
+</body>
+</html>
