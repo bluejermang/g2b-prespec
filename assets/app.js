@@ -813,10 +813,12 @@
 
   (async () => {
     showSkeleton(els.results);
+    // 관리 모드는 관리자 PC(localhost)에서만 열린다. 공유 사이트에서는 확인 요청 자체를 보내지 않는다.
+    const onAdminPc = ['localhost', '127.0.0.1'].includes(location.hostname);
     const [index, settings, admin] = await Promise.all([
       getJson('data/index.json'),
       getJson('data/settings.json').catch(() => null),
-      getJson('data/admin.json').catch(() => null),
+      onAdminPc ? getJson('data/admin.json').catch(() => null) : null,
     ]);
     state.index = index;
     state.admin = Boolean(admin?.admin);
