@@ -157,13 +157,12 @@
 
   // ---------- 필터 ----------
 
+  /** 건수 카드: 사전규격 = 아직 본공고가 없는 사업, 파일 없음 = 제안요청서·과업지시서·규격서가 없는 사업 */
   const TILE_FILTERS = {
     all: { bid: 'all', doc: 'all' },
-    rfp: { bid: 'all', doc: 'rfp' },
-    sow: { bid: 'all', doc: 'sow' },
-    spec: { bid: 'all', doc: 'spec' },
-    none: { bid: 'all', doc: 'none' },
+    prespec: { bid: 'no', doc: 'all' },
     bid: { bid: 'yes', doc: 'all' },
+    nofile: { bid: 'all', doc: 'none' },
   };
 
   const activeTile = (c) => Object.keys(TILE_FILTERS)
@@ -351,12 +350,9 @@
         [document.createTextNode(item.title), icon('external')]));
 
     const foot = el('div', { className: 'card-foot' });
-    if (item.matchedKeywords.length) {
-      foot.append(el('span', {
-        className: 'badge keyword',
-        title: item.matchedKeywords.length > 1 ? `키워드 ${item.matchedKeywords.length}개가 함께 걸렸습니다` : '걸린 키워드',
-        text: item.matchedKeywords.join(' · '),
-      }));
+    // 여러 키워드로 검색된 사업은 걸린 키워드를 모두 나열한다.
+    for (const keyword of item.matchedKeywords) {
+      foot.append(el('span', { className: 'badge keyword', title: '걸린 키워드', text: keyword }));
     }
     if (item.bidNotices.length) {
       foot.append(el('a', { className: 'badge bid', href: item.bidNotices[0].url, target: '_blank', rel: 'noopener',
@@ -407,13 +403,12 @@
   }
 
   function renderTiles(base) {
+    const withBid = base.filter((i) => i.bidNotices.length > 0).length;
     const counts = {
       all: base.length,
-      rfp: base.filter((i) => i.docKind === 'rfp').length,
-      sow: base.filter((i) => i.docKind === 'sow').length,
-      spec: base.filter((i) => i.docKind === 'spec').length,
-      none: base.filter((i) => i.docKind === 'none').length,
-      bid: base.filter((i) => i.bidNotices.length > 0).length,
+      prespec: base.length - withBid,
+      bid: withBid,
+      nofile: base.filter((i) => i.docKind === 'none').length,
     };
     for (const node of document.querySelectorAll('[data-count]')) node.textContent = counts[node.dataset.count];
   }

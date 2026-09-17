@@ -9,7 +9,7 @@
   <title>나라장터 사업공고 수집 자동화</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <link rel="stylesheet" href="assets/style.css?v=f5ec2564">
+  <link rel="stylesheet" href="assets/style.css?v=714196f9">
 </head>
 <body>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -56,6 +56,21 @@
   <main class="wrap">
     <!-- ===== 전체 목록 ===== -->
     <div id="view-all">
+      <section class="tiles" aria-label="건수 (누르면 해당 공고만 보기)">
+        <button type="button" class="tile" data-tile="all" aria-pressed="true">
+          <span class="tile-label">전체</span><strong class="tile-value" data-count="all">–</strong>
+        </button>
+        <button type="button" class="tile ok" data-tile="prespec" aria-pressed="false" title="아직 본공고가 나오지 않은 사전규격">
+          <span class="tile-label">사전규격</span><strong class="tile-value" data-count="prespec">–</strong>
+        </button>
+        <button type="button" class="tile accent" data-tile="bid" aria-pressed="false" title="본공고(입찰공고)가 나온 사업">
+          <span class="tile-label">본공고</span><strong class="tile-value" data-count="bid">–</strong>
+        </button>
+        <button type="button" class="tile warn" data-tile="nofile" aria-pressed="false" title="제안요청서·과업지시서·규격서가 없는 사업">
+          <span class="tile-label">파일 없음</span><strong class="tile-value" data-count="nofile">–</strong>
+        </button>
+      </section>
+
       <section class="controls" aria-label="목록 찾기">
         <div class="period-row">
           <div class="segmented" role="group" aria-label="기간">
@@ -119,27 +134,6 @@
           </div>
           <button type="button" class="link-btn" id="reset" hidden>필터 초기화</button>
         </div>
-      </section>
-
-      <section class="tiles" aria-label="빠른 필터">
-        <button type="button" class="tile" data-tile="all" aria-pressed="true">
-          <span class="tile-label">전체</span><strong class="tile-value" data-count="all">–</strong>
-        </button>
-        <button type="button" class="tile ok" data-tile="rfp" aria-pressed="false">
-          <span class="tile-label">제안요청서</span><strong class="tile-value" data-count="rfp">–</strong>
-        </button>
-        <button type="button" class="tile sow" data-tile="sow" aria-pressed="false">
-          <span class="tile-label">과업지시서</span><strong class="tile-value" data-count="sow">–</strong>
-        </button>
-        <button type="button" class="tile spec" data-tile="spec" aria-pressed="false">
-          <span class="tile-label">규격서</span><strong class="tile-value" data-count="spec">–</strong>
-        </button>
-        <button type="button" class="tile warn" data-tile="none" aria-pressed="false">
-          <span class="tile-label">문서 없음</span><strong class="tile-value" data-count="none">–</strong>
-        </button>
-        <button type="button" class="tile accent" data-tile="bid" aria-pressed="false">
-          <span class="tile-label">본공고 나옴</span><strong class="tile-value" data-count="bid">–</strong>
-        </button>
       </section>
 
       <section class="results-head">
@@ -267,6 +261,6 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="assets/search.js?v=f3fcfa11"></script>
-  <script src="assets/app.js?v=cc15187d"></script>
+  <script src="assets/app.js?v=a300af18"></script>
 </body>
 </html>

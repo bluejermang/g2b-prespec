@@ -140,6 +140,7 @@ a.btn { text-decoration: none; }
   margin-top: 16px; padding: 14px; display: grid; gap: 12px;
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm);
 }
+.tiles + .controls { margin-top: 0; }
 .period-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .segmented { display: inline-flex; padding: 3px; gap: 2px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; }
 .segmented button {
@@ -206,7 +207,7 @@ select {
 .unit { font-size: 13px; }
 
 /* ---------- 요약 타일 ---------- */
-.tiles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 16px 0 12px; }
 .tile {
   display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 12px 14px; text-align: left;
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); cursor: pointer;
@@ -219,8 +220,6 @@ select {
 .tile.warn .tile-value { color: var(--amber); }
 .tile.accent .tile-value { color: var(--accent); }
 .tile.danger .tile-value { color: var(--red); }
-.tile.sow .tile-value { color: var(--sow); }
-.tile.spec .tile-value { color: var(--text-2); }
 .tile[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-weak); box-shadow: 0 0 0 1px var(--accent); }
 
 /* ---------- 결과 목록 ---------- */
