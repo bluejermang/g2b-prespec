@@ -16,6 +16,7 @@
     "ERP"
    ],
    "bidNotices": [],
+   "rfpFound": true,
    "attachmentStatus": "제안요청서 저장",
    "files": [
     {
@@ -42,6 +43,7 @@
     "인증"
    ],
    "bidNotices": [],
+   "rfpFound": true,
    "attachmentStatus": "제안요청서 저장",
    "files": [
     {
@@ -68,6 +70,7 @@
     "홈페이지"
    ],
    "bidNotices": [],
+   "rfpFound": true,
    "attachmentStatus": "제안요청서 저장",
    "files": [
     {
@@ -104,6 +107,7 @@
     "HR"
    ],
    "bidNotices": [],
+   "rfpFound": true,
    "attachmentStatus": "제안요청서 저장",
    "files": [
     {
@@ -135,6 +139,7 @@
     "인증"
    ],
    "bidNotices": [],
+   "rfpFound": false,
    "attachmentStatus": "제안요청서 없음 · 전체 저장",
    "files": [
     {
@@ -161,6 +166,7 @@
     "홈페이지"
    ],
    "bidNotices": [],
+   "rfpFound": true,
    "attachmentStatus": "제안요청서 저장",
    "files": [
     {
@@ -187,6 +193,7 @@
     "인증"
    ],
    "bidNotices": [],
+   "rfpFound": false,
    "attachmentStatus": "제안요청서 없음 · 전체 저장",
    "files": [
     {
@@ -213,6 +220,7 @@
     "인증"
    ],
    "bidNotices": [],
+   "rfpFound": true,
    "attachmentStatus": "제안요청서 저장",
    "files": [
     {
@@ -239,6 +247,7 @@
     "플랫폼"
    ],
    "bidNotices": [],
+   "rfpFound": false,
    "attachmentStatus": "제안요청서 없음 · 전체 저장",
    "files": [
     {
@@ -265,6 +274,7 @@
     "플랫폼"
    ],
    "bidNotices": [],
+   "rfpFound": true,
    "attachmentStatus": "제안요청서 저장",
    "files": [
     {
@@ -296,6 +306,7 @@
     "플랫폼"
    ],
    "bidNotices": [],
+   "rfpFound": false,
    "attachmentStatus": "제안요청서 없음 · 전체 저장",
    "files": [
     {
@@ -322,6 +333,7 @@
     "인장"
    ],
    "bidNotices": [],
+   "rfpFound": false,
    "attachmentStatus": "제안요청서 없음 · 전체 저장",
    "files": [
     {
@@ -353,6 +365,7 @@
     "ERP"
    ],
    "bidNotices": [],
+   "rfpFound": true,
    "attachmentStatus": "제안요청서 저장",
    "files": [
     {
@@ -379,6 +392,7 @@
     "플랫폼"
    ],
    "bidNotices": [],
+   "rfpFound": false,
    "attachmentStatus": "제안요청서 없음 · 전체 저장",
    "files": [
     {
@@ -405,6 +419,7 @@
     "플랫폼"
    ],
    "bidNotices": [],
+   "rfpFound": true,
    "attachmentStatus": "제안요청서 저장",
    "files": [
     {
@@ -436,6 +451,7 @@
     "포털"
    ],
    "bidNotices": [],
+   "rfpFound": true,
    "attachmentStatus": "제안요청서 저장",
    "files": [
     {

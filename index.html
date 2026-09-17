@@ -11,23 +11,95 @@
 <body>
   <header class="top">
     <div class="wrap top-inner">
-      <div>
-        <h1>나라장터 사전규격 알림</h1>
-        <p class="updated" id="updated">불러오는 중…</p>
-      </div>
+      <h1>나라장터 사전규격 알림</h1>
+      <p class="updated" id="updated">불러오는 중…</p>
     </div>
   </header>
 
   <main class="wrap">
+    <details class="card settings" id="settings-panel">
+      <summary>현재 수집 조건 <span class="muted" id="settings-summary"></span></summary>
+      <dl class="settings-list">
+        <dt>키워드</dt><dd id="settings-keywords"></dd>
+        <dt>제외어</dt><dd id="settings-exclude"></dd>
+        <dt>예산</dt><dd id="settings-budget"></dd>
+        <dt>업무구분</dt><dd id="settings-types"></dd>
+      </dl>
+      <p class="muted note">이 조건에 맞는 공고만 매일 목록에 올라옵니다. 조건 변경은 관리자 PC의 관리자 화면에서 하며, 다음 수집부터 적용됩니다.</p>
+    </details>
+
+    <form class="card search" id="search-form" autocomplete="off">
+      <h2 class="card-title">검색조건</h2>
+      <div class="search-grid">
+        <div class="field wide">
+          <span class="label">기간 (목록 날짜)</span>
+          <div class="inline">
+            <select id="from" aria-label="시작 날짜" disabled></select>
+            <span class="muted">~</span>
+            <select id="to" aria-label="끝 날짜" disabled></select>
+          </div>
+          <div class="presets" role="group" aria-label="기간 빠른 선택">
+            <button type="button" class="chip-btn" data-preset="latest">최신</button>
+            <button type="button" class="chip-btn" data-preset="7">최근 7일</button>
+            <button type="button" class="chip-btn" data-preset="30">최근 30일</button>
+            <button type="button" class="chip-btn" data-preset="all">전체</button>
+          </div>
+        </div>
+
+        <label class="field wide">
+          <span class="label">검색어</span>
+          <input type="search" id="q" placeholder="사업명 또는 수요기관 (띄어쓰기로 여러 단어)">
+        </label>
+
+        <div class="field wide">
+          <span class="label">업무구분</span>
+          <div class="checks" id="types">
+            <label><input type="checkbox" value="물품"> 물품</label>
+            <label><input type="checkbox" value="일반용역"> 일반용역</label>
+            <label><input type="checkbox" value="기술용역"> 기술용역</label>
+            <label><input type="checkbox" value="공사"> 공사</label>
+            <label><input type="checkbox" value="외자"> 외자</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="label">예산 (만원)</span>
+          <div class="inline">
+            <input type="text" id="budget-min" inputmode="numeric" placeholder="최소" aria-label="예산 최소 (만원)">
+            <span class="muted">~</span>
+            <input type="text" id="budget-max" inputmode="numeric" placeholder="최대" aria-label="예산 최대 (만원)">
+          </div>
+          <span class="hint-small" id="budget-hint"></span>
+        </div>
+
+        <label class="field">
+          <span class="label">본공고</span>
+          <select id="bid">
+            <option value="all">전체</option>
+            <option value="yes">본공고 있음</option>
+            <option value="no">본공고 없음</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span class="label">첨부</span>
+          <select id="rfp">
+            <option value="all">전체</option>
+            <option value="yes">제안요청서 있음</option>
+            <option value="no">제안요청서 없음</option>
+          </select>
+        </label>
+      </div>
+      <div class="search-actions">
+        <button type="button" class="btn" id="reset">조건 초기화</button>
+      </div>
+    </form>
+
     <section class="toolbar" aria-label="목록 도구">
-      <label class="date-pick">
-        <span>목록 날짜</span>
-        <select id="date-select" disabled></select>
-      </label>
+      <span class="summary" id="summary"></span>
       <div class="toolbar-actions">
-        <span class="summary" id="summary"></span>
         <button type="button" id="copy-button" class="btn primary" disabled>선택 항목 복사</button>
-        <a id="excel-link" class="btn" href="#" aria-disabled="true">엑셀 다운로드</a>
+        <button type="button" id="excel-button" class="btn" disabled>선택 항목 엑셀</button>
       </div>
     </section>
 
@@ -38,6 +110,7 @@
         <thead>
           <tr>
             <th class="col-check"><input type="checkbox" id="check-all" aria-label="전체 선택" checked></th>
+            <th>날짜</th>
             <th class="col-no">번호</th>
             <th>수요기관</th>
             <th>사업명</th>
@@ -51,10 +124,11 @@
         <tbody id="list-body"></tbody>
       </table>
     </div>
-    <p class="empty" id="empty" hidden>이 날짜에는 조건에 맞는 공고가 없습니다.</p>
+    <p class="empty" id="empty" hidden>검색조건에 맞는 공고가 없습니다.</p>
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="assets/search.js"></script>
   <script src="assets/app.js"></script>
 </body>
 </html>

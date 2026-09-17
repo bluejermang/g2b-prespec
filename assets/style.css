@@ -51,26 +51,72 @@ body {
 h1 { margin: 0; font-size: 20px; font-weight: 700; }
 .updated { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
 
-.toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 20px 0 8px;
+.muted { color: var(--muted); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-top: 16px;
 }
-.date-pick { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
-.date-pick select {
-  min-width: 200px;
+.card-title { margin: 0 0 12px; font-size: 15px; }
+
+/* 현재 수집 조건 (보기 전용) */
+.settings { padding: 0; }
+.settings summary { padding: 12px 16px; cursor: pointer; font-weight: 700; }
+.settings[open] summary { border-bottom: 1px solid var(--line); }
+.settings-list { display: grid; grid-template-columns: 84px 1fr; gap: 8px 12px; margin: 14px 16px 0; }
+.settings-list dt { color: var(--muted); font-size: 13px; padding-top: 1px; }
+.settings-list dd { margin: 0; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.settings .note { margin: 12px 16px 14px; font-size: 13px; }
+
+/* 검색조건 */
+.search-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 20px; }
+.field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.field.wide { grid-column: span 3; }
+@media (min-width: 900px) {
+  .field.wide { grid-column: span 1; }
+}
+.label { font-size: 13px; color: var(--muted); font-weight: 600; }
+.inline { display: flex; align-items: center; gap: 6px; }
+.inline > select, .inline > input { flex: 1; min-width: 0; }
+.search input[type=search], .search input[type=text], .search select {
+  width: 100%;
   padding: 7px 10px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: var(--surface);
+  background: var(--bg);
   color: var(--text);
   font: inherit;
 }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.chip-btn {
+  padding: 3px 10px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.chip-btn:hover { border-color: var(--accent); color: var(--accent); }
+.checks { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 6px 0; }
+.checks label { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.hint-small { font-size: 12px; color: var(--muted); min-height: 1em; }
+.search-actions { display: flex; justify-content: flex-end; margin-top: 12px; }
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 16px 0 8px;
+}
 .toolbar-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.summary { color: var(--muted); margin-right: 4px; }
+.summary { color: var(--muted); }
 
 .btn {
   display: inline-flex;
@@ -139,8 +185,9 @@ h1 { margin: 0; font-size: 20px; font-weight: 700; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 @media (max-width: 640px) {
+  .search-grid { grid-template-columns: 1fr; }
+  .field.wide { grid-column: span 1; }
   .toolbar { align-items: stretch; }
-  .date-pick select { width: 100%; }
   .toolbar-actions { width: 100%; }
   .toolbar-actions .btn { flex: 1; justify-content: center; }
   .summary { width: 100%; }
