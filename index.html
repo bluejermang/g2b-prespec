@@ -16,12 +16,17 @@
     <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="10" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="18" r="2" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="10" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="18" r="2" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
     <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
     <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="i-sheet" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 9h16M4 15h16M10 3v18" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21a8 8 0 0 1 16 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v6M12 7.5v.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
   </svg>
 
   <header class="app-header">
@@ -29,122 +34,151 @@
       <div class="brand">
         <span class="brand-mark" aria-hidden="true">📋</span>
         <div>
-          <h1>사전규격 알림</h1>
+          <h1>사전규격 알림 <span class="admin-badge" id="admin-badge" hidden>관리 모드</span></h1>
           <p class="updated" id="updated">불러오는 중…</p>
         </div>
       </div>
-      <button type="button" class="btn ghost" id="open-conditions">
-        <svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg>
-        <span>수집 조건</span>
-      </button>
+      <nav class="view-tabs" aria-label="화면">
+        <button type="button" class="view-tab" data-view="all" aria-current="page">전체 목록</button>
+        <button type="button" class="view-tab" data-view="staff">담당자별</button>
+      </nav>
+      <div class="header-actions">
+        <a class="btn ghost" id="settings-link" href="/admin" hidden>조건 설정</a>
+        <button type="button" class="btn ghost" id="open-conditions">
+          <svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg>
+          <span>수집 조건</span>
+        </button>
+      </div>
     </div>
   </header>
 
   <main class="wrap">
-    <section class="controls" aria-label="목록 찾기">
-      <div class="period-row">
-        <div class="segmented" role="group" aria-label="기간">
-          <button type="button" data-period="day" aria-pressed="true">하루</button>
-          <button type="button" data-period="7">최근 7일</button>
-          <button type="button" data-period="30">최근 30일</button>
-          <button type="button" data-period="all">전체</button>
-          <button type="button" data-period="custom">직접</button>
+    <!-- ===== 전체 목록 ===== -->
+    <div id="view-all">
+      <section class="controls" aria-label="목록 찾기">
+        <div class="period-row">
+          <div class="segmented" role="group" aria-label="기간">
+            <button type="button" data-period="day" aria-pressed="true">하루</button>
+            <button type="button" data-period="7">최근 7일</button>
+            <button type="button" data-period="30">최근 30일</button>
+            <button type="button" data-period="all">전체</button>
+            <button type="button" data-period="custom">직접</button>
+          </div>
+
+          <div class="date-stepper" id="day-nav">
+            <button type="button" class="icon-btn" id="prev-day" aria-label="이전 목록"><svg class="icon"><use href="#i-left"/></svg></button>
+            <select id="day-select" aria-label="목록 날짜"></select>
+            <button type="button" class="icon-btn" id="next-day" aria-label="다음 목록"><svg class="icon"><use href="#i-right"/></svg></button>
+          </div>
+
+          <div class="date-range" id="custom-range" hidden>
+            <select id="from" aria-label="시작 날짜"></select>
+            <span class="muted">~</span>
+            <select id="to" aria-label="끝 날짜"></select>
+          </div>
+
+          <span class="range-label muted" id="range-label" hidden></span>
         </div>
 
-        <div class="date-stepper" id="day-nav">
-          <button type="button" class="icon-btn" id="prev-day" aria-label="이전 목록"><svg class="icon"><use href="#i-left"/></svg></button>
-          <select id="day-select" aria-label="목록 날짜"></select>
-          <button type="button" class="icon-btn" id="next-day" aria-label="다음 목록"><svg class="icon"><use href="#i-right"/></svg></button>
+        <label class="search-box">
+          <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+          <input type="search" id="q" placeholder="사업명·수요기관 검색" aria-label="사업명 또는 수요기관 검색" enterkeyhint="search">
+          <kbd class="kbd" aria-hidden="true">/</kbd>
+        </label>
+
+        <div class="filter-row">
+          <div class="chips" id="type-chips" role="group" aria-label="업무구분">
+            <button type="button" class="chip" data-type="물품" aria-pressed="false">물품</button>
+            <button type="button" class="chip" data-type="일반용역" aria-pressed="false">일반용역</button>
+            <button type="button" class="chip" data-type="기술용역" aria-pressed="false">기술용역</button>
+            <button type="button" class="chip" data-type="공사" aria-pressed="false">공사</button>
+            <button type="button" class="chip" data-type="외자" aria-pressed="false">외자</button>
+          </div>
+          <span class="divider" aria-hidden="true"></span>
+          <label class="chip select-chip">
+            <span class="sr-only">예산</span>
+            <select id="budget-preset" aria-label="예산">
+              <option value="">예산 전체</option>
+              <option value="5000-">5천만원 이상</option>
+              <option value="10000-">1억원 이상</option>
+              <option value="30000-">3억원 이상</option>
+              <option value="100000-">10억원 이상</option>
+              <option value="custom">직접 입력</option>
+            </select>
+          </label>
+          <div class="budget-custom" id="budget-custom" hidden>
+            <input type="text" id="budget-min" inputmode="numeric" placeholder="최소" aria-label="예산 최소 (만원)">
+            <span class="muted">~</span>
+            <input type="text" id="budget-max" inputmode="numeric" placeholder="최대" aria-label="예산 최대 (만원)">
+            <span class="muted unit">만원</span>
+          </div>
+          <button type="button" class="link-btn" id="reset" hidden>필터 초기화</button>
         </div>
+      </section>
 
-        <div class="date-range" id="custom-range" hidden>
-          <select id="from" aria-label="시작 날짜"></select>
-          <span class="muted">~</span>
-          <select id="to" aria-label="끝 날짜"></select>
-        </div>
+      <section class="tiles" aria-label="빠른 필터">
+        <button type="button" class="tile" data-tile="all" aria-pressed="true">
+          <span class="tile-label">전체</span><strong class="tile-value" data-count="all">–</strong>
+        </button>
+        <button type="button" class="tile ok" data-tile="rfp" aria-pressed="false">
+          <span class="tile-label">제안요청서</span><strong class="tile-value" data-count="rfp">–</strong>
+        </button>
+        <button type="button" class="tile sow" data-tile="sow" aria-pressed="false">
+          <span class="tile-label">과업지시서</span><strong class="tile-value" data-count="sow">–</strong>
+        </button>
+        <button type="button" class="tile warn" data-tile="none" aria-pressed="false">
+          <span class="tile-label">문서 없음</span><strong class="tile-value" data-count="none">–</strong>
+        </button>
+        <button type="button" class="tile accent" data-tile="bid" aria-pressed="false">
+          <span class="tile-label">본공고 나옴</span><strong class="tile-value" data-count="bid">–</strong>
+        </button>
+      </section>
 
-        <span class="range-label muted" id="range-label" hidden></span>
-      </div>
-
-      <label class="search-box">
-        <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
-        <input type="search" id="q" placeholder="사업명·수요기관 검색" aria-label="사업명 또는 수요기관 검색" enterkeyhint="search">
-        <kbd class="kbd" aria-hidden="true">/</kbd>
-      </label>
-
-      <div class="filter-row">
-        <div class="chips" id="type-chips" role="group" aria-label="업무구분">
-          <button type="button" class="chip" data-type="물품" aria-pressed="false">물품</button>
-          <button type="button" class="chip" data-type="일반용역" aria-pressed="false">일반용역</button>
-          <button type="button" class="chip" data-type="기술용역" aria-pressed="false">기술용역</button>
-          <button type="button" class="chip" data-type="공사" aria-pressed="false">공사</button>
-          <button type="button" class="chip" data-type="외자" aria-pressed="false">외자</button>
-        </div>
-        <span class="divider" aria-hidden="true"></span>
-        <label class="chip select-chip">
-          <span class="sr-only">예산</span>
-          <select id="budget-preset" aria-label="예산">
-            <option value="">예산 전체</option>
-            <option value="5000-">5천만원 이상</option>
-            <option value="10000-">1억원 이상</option>
-            <option value="30000-">3억원 이상</option>
-            <option value="100000-">10억원 이상</option>
-            <option value="custom">직접 입력</option>
+      <section class="results-head">
+        <label class="check-all">
+          <input type="checkbox" id="check-all">
+          <span id="result-count">–</span>
+        </label>
+        <label class="sort">
+          <span class="muted">정렬</span>
+          <select id="sort">
+            <option value="default">번호순</option>
+            <option value="published">공개일시 최신 순</option>
+            <option value="budget">예산 높은 순</option>
           </select>
         </label>
-        <div class="budget-custom" id="budget-custom" hidden>
-          <input type="text" id="budget-min" inputmode="numeric" placeholder="최소" aria-label="예산 최소 (만원)">
-          <span class="muted">~</span>
-          <input type="text" id="budget-max" inputmode="numeric" placeholder="최대" aria-label="예산 최대 (만원)">
-          <span class="muted unit">만원</span>
-        </div>
-        <button type="button" class="link-btn" id="reset" hidden>필터 초기화</button>
+      </section>
+
+      <div id="results" class="results" aria-live="polite"></div>
+
+      <div class="empty" id="empty" hidden>
+        <p class="empty-title">조건에 맞는 공고가 없습니다</p>
+        <p class="muted">기간을 넓히거나 필터를 줄여 보세요.</p>
+        <button type="button" class="btn" id="empty-reset">필터 초기화</button>
       </div>
-    </section>
+    </div>
 
-    <section class="tiles" aria-label="빠른 필터" id="tiles">
-      <button type="button" class="tile" data-tile="all" aria-pressed="true">
-        <span class="tile-label">전체</span><strong class="tile-value" data-count="all">–</strong>
-      </button>
-      <button type="button" class="tile ok" data-tile="rfp" aria-pressed="false">
-        <span class="tile-label">제안요청서 확보</span><strong class="tile-value" data-count="rfp">–</strong>
-      </button>
-      <button type="button" class="tile warn" data-tile="check" aria-pressed="false">
-        <span class="tile-label">첨부 확인 필요</span><strong class="tile-value" data-count="check">–</strong>
-      </button>
-      <button type="button" class="tile accent" data-tile="bid" aria-pressed="false">
-        <span class="tile-label">본공고 나옴</span><strong class="tile-value" data-count="bid">–</strong>
-      </button>
-      <button type="button" class="tile danger" data-tile="soon" aria-pressed="false">
-        <span class="tile-label">의견마감 3일 내</span><strong class="tile-value" data-count="soon">–</strong>
-      </button>
-    </section>
-
-    <section class="results-head">
-      <label class="check-all">
-        <input type="checkbox" id="check-all">
-        <span id="result-count">–</span>
-      </label>
-      <label class="sort">
-        <span class="muted">정렬</span>
-        <select id="sort">
-          <option value="default">번호순</option>
-          <option value="budget">예산 높은 순</option>
-          <option value="deadline">의견마감 임박 순</option>
-        </select>
-      </label>
-    </section>
-
-    <div id="results" class="results" aria-live="polite"></div>
-
-    <div class="empty" id="empty" hidden>
-      <p class="empty-title">조건에 맞는 공고가 없습니다</p>
-      <p class="muted">기간을 넓히거나 필터를 줄여 보세요.</p>
-      <button type="button" class="btn" id="empty-reset">필터 초기화</button>
+    <!-- ===== 담당자별 ===== -->
+    <div id="view-staff" hidden>
+      <section class="controls staff-controls" aria-label="담당자 선택">
+        <div class="staff-picker" id="staff-picker" role="group" aria-label="담당자"></div>
+        <p class="muted small" id="staff-hint"></p>
+      </section>
+      <section class="results-head">
+        <label class="check-all">
+          <input type="checkbox" id="staff-check-all">
+          <span id="staff-count">–</span>
+        </label>
+      </section>
+      <div id="deliveries" class="deliveries" aria-live="polite"></div>
+      <div class="empty" id="staff-empty" hidden>
+        <p class="empty-title" id="staff-empty-title">배정된 공고가 없습니다</p>
+        <p class="muted" id="staff-empty-desc">관리자가 공고를 배정하면 여기에 표시됩니다.</p>
+      </div>
     </div>
   </main>
 
-  <div class="action-bar" id="action-bar" role="region" aria-label="복사와 엑셀">
+  <div class="action-bar" id="action-bar" role="region" aria-label="선택한 공고 작업">
     <div class="action-inner">
       <p class="action-text" id="action-text">–</p>
       <div class="action-buttons">
@@ -152,8 +186,11 @@
         <button type="button" class="btn" id="excel-button">
           <svg class="icon" aria-hidden="true"><use href="#i-sheet"/></svg><span>엑셀</span>
         </button>
-        <button type="button" class="btn primary" id="copy-button">
+        <button type="button" class="btn" id="copy-button">
           <svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg><span id="copy-label">복사</span>
+        </button>
+        <button type="button" class="btn primary" id="assign-button" hidden>
+          <svg class="icon" aria-hidden="true"><use href="#i-send"/></svg><span>담당자 배정</span>
         </button>
       </div>
     </div>
@@ -171,9 +208,52 @@
       <dt>예산</dt><dd id="cond-budget"></dd>
       <dt>업무구분</dt><dd id="cond-types"></dd>
     </dl>
+    <h3 class="sheet-sub">첨부 규칙</h3>
+    <ol class="rules">
+      <li>파일명에 <b>제안요청서</b> 또는 <b>RFP</b>가 들어간 파일</li>
+      <li>없으면 <b>과업지시서</b>가 들어간 파일</li>
+      <li>둘 다 없으면 파일 없이 안내 문구만 표시</li>
+    </ol>
     <h3 class="sheet-sub">복사 형식</h3>
     <p class="copy-sample">수요기관명 - <u>사업명 (예산)</u> -&gt; 본공고</p>
     <p class="muted small">사업명에 나라장터 링크가 걸린 채 복사되어 업무시스템에 그대로 붙여넣을 수 있습니다.</p>
+  </dialog>
+
+  <dialog class="modal" id="assign-dialog" aria-labelledby="assign-title">
+    <form method="dialog" id="assign-form">
+      <div class="modal-head">
+        <h2 id="assign-title">담당자 배정</h2>
+        <button type="button" class="icon-btn" data-close aria-label="닫기"><svg class="icon"><use href="#i-x"/></svg></button>
+      </div>
+      <p class="modal-desc" id="assign-desc"></p>
+      <ul class="assign-items" id="assign-items"></ul>
+      <fieldset class="assign-staff">
+        <legend>담당자 <span class="muted small">(여러 명 선택 가능)</span></legend>
+        <div class="staff-options" id="staff-options"></div>
+        <p class="muted small" id="staff-options-empty" hidden>등록된 담당자가 없습니다. <a href="/admin">조건 설정</a>에서 담당자를 먼저 추가하세요.</p>
+      </fieldset>
+      <label class="assign-message">
+        <span>전달할 말</span>
+        <textarea id="assign-message" rows="4" maxlength="1000" placeholder="예) 9/25까지 제안 여부 검토 후 회신 부탁드립니다."></textarea>
+      </label>
+      <p class="notice-public"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>전달한 내용은 공유 사이트의 담당자별 화면에 게시되어, 주소를 아는 사람은 볼 수 있습니다.</p>
+      <p class="form-error" id="assign-error" hidden></p>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-close>취소</button>
+        <button type="submit" class="btn primary" id="assign-submit"><svg class="icon" aria-hidden="true"><use href="#i-send"/></svg><span>전달</span></button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal small-modal" id="confirm-dialog" role="alertdialog" aria-labelledby="confirm-title" aria-describedby="confirm-desc">
+    <div class="modal-head">
+      <h2 id="confirm-title">공고 삭제</h2>
+    </div>
+    <p class="modal-desc" id="confirm-desc"></p>
+    <div class="modal-actions">
+      <button type="button" class="btn ghost" data-close>취소</button>
+      <button type="button" class="btn danger" id="confirm-ok">삭제</button>
+    </div>
   </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
