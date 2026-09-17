@@ -9,7 +9,7 @@
   <title>나라장터 사전규격 알림</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <link rel="stylesheet" href="assets/style.css?v=3ac3ac68">
+  <link rel="stylesheet" href="assets/style.css?v=a889e2cf">
 </head>
 <body>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -126,6 +126,9 @@
         <button type="button" class="tile sow" data-tile="sow" aria-pressed="false">
           <span class="tile-label">과업지시서</span><strong class="tile-value" data-count="sow">–</strong>
         </button>
+        <button type="button" class="tile spec" data-tile="spec" aria-pressed="false">
+          <span class="tile-label">규격서</span><strong class="tile-value" data-count="spec">–</strong>
+        </button>
         <button type="button" class="tile warn" data-tile="none" aria-pressed="false">
           <span class="tile-label">문서 없음</span><strong class="tile-value" data-count="none">–</strong>
         </button>
@@ -212,7 +215,8 @@
     <ol class="rules">
       <li>파일명에 <b>제안요청서</b> 또는 <b>RFP</b>가 들어간 파일</li>
       <li>없으면 <b>과업지시서</b>가 들어간 파일</li>
-      <li>둘 다 없으면 파일 없이 안내 문구만 표시</li>
+      <li>없으면 <b>규격서</b>가 들어간 파일</li>
+      <li>셋 다 없으면 파일 없이 안내 문구만 표시</li>
     </ol>
     <h3 class="sheet-sub">복사 형식</h3>
     <p class="copy-sample">수요기관명 - <u>사업명 (예산)</u> -&gt; 본공고</p>
@@ -257,7 +261,7 @@
   </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="assets/search.js?v=c008c84e"></script>
-  <script src="assets/app.js?v=e97f660a"></script>
+  <script src="assets/search.js?v=775c8ece"></script>
+  <script src="assets/app.js?v=143e26f2"></script>
 </body>
 </html>

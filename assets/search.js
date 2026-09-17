@@ -1,7 +1,7 @@
 // 목록 검색조건·정렬: 브라우저(app.js)와 테스트에서 함께 쓴다.
 (function (root) {
   const BID = ['all', 'yes', 'no'];
-  const DOC = ['all', 'rfp', 'sow', 'none'];
+  const DOC = ['all', 'rfp', 'sow', 'spec', 'none'];
   const SORTS = ['default', 'published', 'budget'];
 
   /** 빈 검색조건. 기간(from/to)은 목록 날짜 문자열, 예산은 만원 단위. */

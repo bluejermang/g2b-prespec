@@ -159,6 +159,7 @@
     all: { bid: 'all', doc: 'all' },
     rfp: { bid: 'all', doc: 'rfp' },
     sow: { bid: 'all', doc: 'sow' },
+    spec: { bid: 'all', doc: 'spec' },
     none: { bid: 'all', doc: 'none' },
     bid: { bid: 'yes', doc: 'all' },
   };
@@ -202,8 +203,7 @@
 
   function docSection(item) {
     const nodes = [];
-    if (item.docKind === 'rfp' || item.docKind === 'sow') {
-      nodes.push(el('span', { className: `badge doc ${item.docKind}`, text: item.docLabel }));
+    if (['rfp', 'sow', 'spec'].includes(item.docKind)) {
       for (const f of item.docFiles) {
         nodes.push(el('a', { className: `file-link ${item.docKind}`, href: f.url, title: `${f.name} 내려받기` },
           [icon('file'), el('span', { text: f.name })]));
@@ -237,8 +237,8 @@
     });
 
     const meta = el('div', { className: 'card-meta' }, [
-      el('span', { className: 'agency', text: item.agency }),
       el('span', { className: 'badge type', text: item.businessType }),
+      el('span', { className: 'agency', text: item.agency }),
       showDate ? el('span', { className: 'muted', text: `${dateLabel(item.listDate)} 목록` }) : null,
       ...item.assignees.map((a) => el('span', { className: 'badge assignee', title: '배정된 담당자' }, [icon('user'), el('span', { text: a.name })])),
     ]);
@@ -273,7 +273,7 @@
     ]);
 
     const card = el('article', { className: `card${checked ? ' selected' : ''}`, 'data-no': key }, [
-      el('label', { className: 'card-lead' }, [el('span', { className: 'card-index', text: String(number) }), checkbox]),
+      el('label', { className: 'card-lead' }, [checkbox, el('span', { className: 'card-index', text: String(number) })]),
       body,
     ]);
 
@@ -313,6 +313,7 @@
       all: base.length,
       rfp: base.filter((i) => i.docKind === 'rfp').length,
       sow: base.filter((i) => i.docKind === 'sow').length,
+      spec: base.filter((i) => i.docKind === 'spec').length,
       none: base.filter((i) => i.docKind === 'none').length,
       bid: base.filter((i) => i.bidNotices.length > 0).length,
     };

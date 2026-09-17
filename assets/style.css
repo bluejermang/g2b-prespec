@@ -187,7 +187,7 @@ select {
 .unit { font-size: 13px; }
 
 /* ---------- 요약 타일 ---------- */
-.tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+.tiles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
 .tile {
   display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 12px 14px; text-align: left;
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); cursor: pointer;
@@ -201,6 +201,7 @@ select {
 .tile.accent .tile-value { color: var(--accent); }
 .tile.danger .tile-value { color: var(--red); }
 .tile.sow .tile-value { color: var(--sow); }
+.tile.spec .tile-value { color: var(--text-2); }
 .tile[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-weak); box-shadow: 0 0 0 1px var(--accent); }
 
 /* ---------- 결과 목록 ---------- */
@@ -228,7 +229,7 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent);
 .card-lead:hover { background: var(--surface-2); }
 .card.selected .card-lead { background: var(--accent-weak); }
 .card-index {
-  min-width: 26px; text-align: right; font-size: 13px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums;
+  min-width: 22px; text-align: left; font-size: 13px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums;
 }
 .card-body { flex: 1; min-width: 0; padding: 13px 16px 13px 14px; display: grid; gap: 4px; }
 .is-admin .card-body { padding-right: 52px; }
@@ -262,8 +263,6 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent);
 .badge.keyword { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 .badge.assignee { background: var(--sow-weak); color: var(--sow); border-color: transparent; }
 .badge.assignee .icon { width: 12px; height: 12px; }
-.badge.doc.rfp { background: var(--green-weak); color: var(--green); border-color: transparent; }
-.badge.doc.sow { background: var(--sow-weak); color: var(--sow); border-color: transparent; }
 
 .file-link {
   display: inline-flex; align-items: center; gap: 5px; max-width: 360px; height: 28px; padding: 0 10px;
@@ -274,6 +273,7 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent);
 .file-link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .file-link.rfp .icon { color: var(--green); }
 .file-link.sow .icon { color: var(--sow); }
+.file-link.spec .icon { color: var(--text-2); }
 .doc-none { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--muted); }
 .doc-none .icon { width: 15px; height: 15px; }
 

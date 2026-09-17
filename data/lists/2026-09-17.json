@@ -137,10 +137,15 @@
     "인증"
    ],
    "bidNotices": [],
-   "docKind": "none",
-   "docFiles": [],
-   "docLabel": "사업에 제안요청서 또는 과업지시서 파일이 첨부되어 있지 않습니다.",
-   "attachmentStatus": "사업에 제안요청서 또는 과업지시서 파일이 첨부되어 있지 않습니다.",
+   "docKind": "spec",
+   "docFiles": [
+    {
+     "name": "제품 규격서.hwp",
+     "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00275358&fileType=BFDTL&fileSeq=1"
+    }
+   ],
+   "docLabel": "규격서",
+   "attachmentStatus": "규격서",
    "attachmentsFull": false,
    "assignees": [],
    "copyText": "광주시립요양병원 - 2026년 인증평가 기능보강사업(의료기기 4종 4기) (8,496만원) ->",
@@ -252,10 +257,15 @@
     "플랫폼"
    ],
    "bidNotices": [],
-   "docKind": "none",
-   "docFiles": [],
-   "docLabel": "사업에 제안요청서 또는 과업지시서 파일이 첨부되어 있지 않습니다.",
-   "attachmentStatus": "사업에 제안요청서 또는 과업지시서 파일이 첨부되어 있지 않습니다.",
+   "docKind": "spec",
+   "docFiles": [
+    {
+     "name": "규격서.pdf",
+     "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00275550&fileType=BFDTL&fileSeq=1"
+    }
+   ],
+   "docLabel": "규격서",
+   "attachmentStatus": "규격서",
    "attachmentsFull": false,
    "assignees": [],
    "copyText": "한국공학대학교 산학협력단 - 오픈형 고성능 AI서비스 운영플랫폼 구축용 서버 (1억5,000만원) ->",
@@ -339,8 +349,8 @@
    "bidNotices": [],
    "docKind": "none",
    "docFiles": [],
-   "docLabel": "사업에 제안요청서 또는 과업지시서 파일이 첨부되어 있지 않습니다.",
-   "attachmentStatus": "사업에 제안요청서 또는 과업지시서 파일이 첨부되어 있지 않습니다.",
+   "docLabel": "사업에 제안요청서, 과업지시서, 규격서 파일이 첨부되어 있지 않습니다.",
+   "attachmentStatus": "사업에 제안요청서, 과업지시서, 규격서 파일이 첨부되어 있지 않습니다.",
    "attachmentsFull": false,
    "assignees": [],
    "copyText": "경기도 부천시 - 부천체육관 인라인장 바닥포장재 (아크릴포장) 구매 및 설치 (1억9,621만원) ->",
@@ -392,10 +402,15 @@
     "플랫폼"
    ],
    "bidNotices": [],
-   "docKind": "none",
-   "docFiles": [],
-   "docLabel": "사업에 제안요청서 또는 과업지시서 파일이 첨부되어 있지 않습니다.",
-   "attachmentStatus": "사업에 제안요청서 또는 과업지시서 파일이 첨부되어 있지 않습니다.",
+   "docKind": "spec",
+   "docFiles": [
+    {
+     "name": "물품규격서_안저카메라.pdf",
+     "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00275789&fileType=BFDTL&fileSeq=1"
+    }
+   ],
+   "docLabel": "규격서",
+   "attachmentStatus": "규격서",
    "attachmentsFull": false,
    "assignees": [],
    "copyText": "크리스타비전 주식회사 - AI-PACS-EMR 기반 안과 만성질환 AI 에이전트 플랫폼 구축 및 강원 지역 실증 사업 (3,620만원) ->",
