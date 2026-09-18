@@ -1,0 +1,240 @@
+{
+ "date": "2026-09-18",
+ "items": [
+  {
+   "listDate": "2026-09-18",
+   "seqNo": 1,
+   "bfSpecRgstNo": "R26BD00275913",
+   "businessType": "물품",
+   "agency": "부산광역시 상수도사업본부",
+   "title": "노후 수용가정보시스템 교체",
+   "budget": 305903300,
+   "budgetText": "3억 590만원",
+   "publishedAt": "2026-09-17 15:29:27",
+   "registeredAt": "2026-09-17 15:29:24",
+   "detailUrl": "https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00275913",
+   "matchedKeywords": [
+    "정보시스템"
+   ],
+   "bidNotices": [],
+   "docKind": "none",
+   "docFiles": [],
+   "docLabel": "사업에 제안요청서, 과업지시서, 규격서 파일이 첨부되어 있지 않습니다.",
+   "attachmentStatus": "사업에 제안요청서, 과업지시서, 규격서 파일이 첨부되어 있지 않습니다.",
+   "attachmentsFull": false,
+   "assignees": [],
+   "copyText": "부산광역시 상수도사업본부 - 노후 수용가정보시스템 교체 (3억 590만원) ->",
+   "copyHtml": "부산광역시 상수도사업본부 - <a href=\"https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00275913\">노후 수용가정보시스템 교체 (3억 590만원)</a> -&gt;"
+  },
+  {
+   "listDate": "2026-09-18",
+   "seqNo": 2,
+   "bfSpecRgstNo": "R26BD00275974",
+   "businessType": "일반용역",
+   "agency": "경북대학교 산학협력단",
+   "title": "경북대 장비관리포털시스템 기능고도화",
+   "budget": 30000000,
+   "budgetText": "3,000만원",
+   "publishedAt": "2026-09-17 16:14:19",
+   "registeredAt": "2026-09-17 16:14:14",
+   "detailUrl": "https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00275974",
+   "matchedKeywords": [
+    "포털"
+   ],
+   "bidNotices": [],
+   "docKind": "rfp",
+   "docFiles": [
+    {
+     "name": "[제안요청서]경북대 장비관리포털시스템 기능고도화.hwpx",
+     "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00275974&fileType=BFDTL&fileSeq=1"
+    }
+   ],
+   "docLabel": "제안요청서",
+   "attachmentStatus": "제안요청서",
+   "attachmentsFull": false,
+   "assignees": [],
+   "copyText": "경북대학교 산학협력단 - 경북대 장비관리포털시스템 기능고도화 (3,000만원) ->",
+   "copyHtml": "경북대학교 산학협력단 - <a href=\"https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00275974\">경북대 장비관리포털시스템 기능고도화 (3,000만원)</a> -&gt;"
+  },
+  {
+   "listDate": "2026-09-18",
+   "seqNo": 3,
+   "bfSpecRgstNo": "R26BD00275986",
+   "businessType": "일반용역",
+   "agency": "한국식품연구원부설 세계김치연구소",
+   "title": "세계김치연구소 정보시스템 웹 전환 및 기능 개선",
+   "budget": 1108000000,
+   "budgetText": "11억 800만원",
+   "publishedAt": "2026-09-17 16:34:29",
+   "registeredAt": "2026-09-17 16:28:58",
+   "detailUrl": "https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00275986",
+   "matchedKeywords": [
+    "정보시스템"
+   ],
+   "bidNotices": [],
+   "docKind": "rfp",
+   "docFiles": [
+    {
+     "name": "2. 제안요청서.hwpx",
+     "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00275986&fileType=BFDTL&fileSeq=1"
+    }
+   ],
+   "docLabel": "제안요청서",
+   "attachmentStatus": "제안요청서",
+   "attachmentsFull": false,
+   "assignees": [],
+   "copyText": "한국식품연구원부설 세계김치연구소 - 세계김치연구소 정보시스템 웹 전환 및 기능 개선 (11억 800만원) ->",
+   "copyHtml": "한국식품연구원부설 세계김치연구소 - <a href=\"https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00275986\">세계김치연구소 정보시스템 웹 전환 및 기능 개선 (11억 800만원)</a> -&gt;"
+  },
+  {
+   "listDate": "2026-09-18",
+   "seqNo": 4,
+   "bfSpecRgstNo": "R26BD00275998",
+   "businessType": "일반용역",
+   "agency": "애니라이트스쿨 평택대표사무소",
+   "title": "애니라이트스쿨평택 국제학교 마스터플랜 및 실행 로드맵 수립 용역",
+   "budget": 2000000000,
+   "budgetText": "20억원",
+   "publishedAt": "2026-09-17 16:42:55",
+   "registeredAt": "2026-09-17 16:42:50",
+   "detailUrl": "https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00275998",
+   "matchedKeywords": [
+    "마스터플랜"
+   ],
+   "bidNotices": [],
+   "docKind": "rfp",
+   "docFiles": [
+    {
+     "name": "제안요청서(등록용).hwpx",
+     "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00275998&fileType=BFDTL&fileSeq=2"
+    }
+   ],
+   "docLabel": "제안요청서",
+   "attachmentStatus": "제안요청서",
+   "attachmentsFull": false,
+   "assignees": [],
+   "copyText": "애니라이트스쿨 평택대표사무소 - 애니라이트스쿨평택 국제학교 마스터플랜 및 실행 로드맵 수립 용역 (20억원) ->",
+   "copyHtml": "애니라이트스쿨 평택대표사무소 - <a href=\"https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00275998\">애니라이트스쿨평택 국제학교 마스터플랜 및 실행 로드맵 수립 용역 (20억원)</a> -&gt;"
+  },
+  {
+   "listDate": "2026-09-18",
+   "seqNo": 5,
+   "bfSpecRgstNo": "R26BD00276006",
+   "businessType": "일반용역",
+   "agency": "한국고용노동교육원",
+   "title": "사업관리시스템 고도화 사업",
+   "budget": 100000000,
+   "budgetText": "1억원",
+   "publishedAt": "2026-09-17 16:49:45",
+   "registeredAt": "2026-09-17 16:49:42",
+   "detailUrl": "https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00276006",
+   "matchedKeywords": [
+    "사업관리시스템"
+   ],
+   "bidNotices": [],
+   "docKind": "rfp",
+   "docFiles": [
+    {
+     "name": "사업관리시스템 고도화 사업 제안요청서.hwpx",
+     "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00276006&fileType=BFDTL&fileSeq=1"
+    }
+   ],
+   "docLabel": "제안요청서",
+   "attachmentStatus": "제안요청서",
+   "attachmentsFull": false,
+   "assignees": [],
+   "copyText": "한국고용노동교육원 - 사업관리시스템 고도화 사업 (1억원) ->",
+   "copyHtml": "한국고용노동교육원 - <a href=\"https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00276006\">사업관리시스템 고도화 사업 (1억원)</a> -&gt;"
+  },
+  {
+   "listDate": "2026-09-18",
+   "seqNo": 6,
+   "bfSpecRgstNo": "R26BD00276048",
+   "businessType": "물품",
+   "agency": "(재)경남로봇랜드재단",
+   "title": "「물류영역 서비스로봇 공통플랫폼 구축사업 」자동라벨스캐너시스템 구매(수정)",
+   "budget": 65000000,
+   "budgetText": "6,500만원",
+   "publishedAt": "2026-09-17 18:03:45",
+   "registeredAt": "2026-09-17 17:45:00",
+   "detailUrl": "https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00276048",
+   "matchedKeywords": [
+    "플랫폼"
+   ],
+   "bidNotices": [],
+   "docKind": "rfp",
+   "docFiles": [
+    {
+     "name": "04. 제안요청서(자동라벨스캐너시스템).hwp",
+     "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00276048&fileType=BFDTL&fileSeq=2"
+    }
+   ],
+   "docLabel": "제안요청서",
+   "attachmentStatus": "제안요청서",
+   "attachmentsFull": false,
+   "assignees": [],
+   "copyText": "(재)경남로봇랜드재단 - 「물류영역 서비스로봇 공통플랫폼 구축사업 」자동라벨스캐너시스템 구매(수정) (6,500만원) ->",
+   "copyHtml": "(재)경남로봇랜드재단 - <a href=\"https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00276048\">「물류영역 서비스로봇 공통플랫폼 구축사업 」자동라벨스캐너시스템 구매(수정) (6,500만원)</a> -&gt;"
+  },
+  {
+   "listDate": "2026-09-18",
+   "seqNo": 7,
+   "bfSpecRgstNo": "R26BD00276071",
+   "businessType": "일반용역",
+   "agency": "서울특별시체육회",
+   "title": "SSC 전사적자원관리시스템(ERP) 개발 용역",
+   "budget": 425000000,
+   "budgetText": "4억 2,500만원",
+   "publishedAt": "2026-09-17 18:13:44",
+   "registeredAt": "2026-09-17 18:13:42",
+   "detailUrl": "https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00276071",
+   "matchedKeywords": [
+    "ERP"
+   ],
+   "bidNotices": [],
+   "docKind": "rfp",
+   "docFiles": [
+    {
+     "name": "2.제안요청서0917.hwpx",
+     "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00276071&fileType=BFDTL&fileSeq=1"
+    }
+   ],
+   "docLabel": "제안요청서",
+   "attachmentStatus": "제안요청서",
+   "attachmentsFull": false,
+   "assignees": [],
+   "copyText": "서울특별시체육회 - SSC 전사적자원관리시스템(ERP) 개발 용역 (4억 2,500만원) ->",
+   "copyHtml": "서울특별시체육회 - <a href=\"https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00276071\">SSC 전사적자원관리시스템(ERP) 개발 용역 (4억 2,500만원)</a> -&gt;"
+  },
+  {
+   "listDate": "2026-09-18",
+   "seqNo": 8,
+   "bfSpecRgstNo": "R26BD00276124",
+   "businessType": "일반용역",
+   "agency": "공주교육대학교",
+   "title": "공주교대 LLM 기반 AI 통합플랫폼서비스 도입",
+   "budget": 49800000,
+   "budgetText": "4,980만원",
+   "publishedAt": "2026-09-18 06:38:21",
+   "registeredAt": "2026-09-18 06:38:19",
+   "detailUrl": "https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00276124",
+   "matchedKeywords": [
+    "플랫폼"
+   ],
+   "bidNotices": [],
+   "docKind": "rfp",
+   "docFiles": [
+    {
+     "name": "공주교대  AI 통합 플랫폼 도입 입찰용 제안요청서_0916 (1).hwpx",
+     "url": "https://www.g2b.go.kr/pn/pnz/pnza/UntyAtchFile/downloadFile.do?bfSpecRegNo=R26BD00276124&fileType=BFDTL&fileSeq=1"
+    }
+   ],
+   "docLabel": "제안요청서",
+   "attachmentStatus": "제안요청서",
+   "attachmentsFull": false,
+   "assignees": [],
+   "copyText": "공주교육대학교 - 공주교대 LLM 기반 AI 통합플랫폼서비스 도입 (4,980만원) ->",
+   "copyHtml": "공주교육대학교 - <a href=\"https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00276124\">공주교대 LLM 기반 AI 통합플랫폼서비스 도입 (4,980만원)</a> -&gt;"
+  }
+ ]
+}
