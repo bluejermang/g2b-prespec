@@ -26,7 +26,12 @@
    "attachmentStatus": "사업에 제안요청서, 과업지시서, 규격서 파일이 첨부되어 있지 않습니다.",
    "attachmentsFull": false,
    "products": [],
-   "assignees": [],
+   "assignees": [
+    {
+     "id": 1,
+     "name": "이강석"
+    }
+   ],
    "copyText": "부산광역시 상수도사업본부 - 노후 수용가정보시스템 교체 (3억 590만원) ->",
    "copyHtml": "부산광역시 상수도사업본부 - <a href=\"https://www.g2b.go.kr/link/PRVA004_02/single/?bfSpecRegNo=R26BD00275913\">노후 수용가정보시스템 교체 (3억 590만원)</a> -&gt;"
   },
