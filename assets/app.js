@@ -6,7 +6,7 @@
   const UNASSIGNED = 'none';
 
   const els = {
-    updated: $('updated'), adminBadge: $('admin-badge'), settingsLink: $('settings-link'),
+    updated: $('updated'), settingsLink: $('settings-link'), offlineBanner: $('offline-banner'), offlineText: $('offline-text'),
     viewTabs: [...document.querySelectorAll('[data-view]')], viewAll: $('view-all'), viewStaff: $('view-staff'),
     periodButtons: [...document.querySelectorAll('[data-period]')],
     dayNav: $('day-nav'), daySelect: $('day-select'), prevDay: $('prev-day'), nextDay: $('next-day'),
@@ -32,8 +32,8 @@
   };
 
   const state = {
-    admin: false,
-    adminStaff: [],     // 관리 모드: 배정할 수 있는 담당자
+    live: false,        // 서버에 연결됨: 배정·삭제 가능. false면 PC가 꺼져 있어 게시된 목록을 보기 전용으로 보여 준다.
+    staffOptions: [],   // 배정할 수 있는 담당자
     index: null,        // data/index.json
     dates: [],
     criteria: null,
@@ -157,16 +157,22 @@
 
   // ---------- 필터 ----------
 
-  /** 건수 카드: 사전규격 = 아직 본공고가 없는 사업, 파일 없음 = 제안요청서·과업지시서·규격서가 없는 사업 */
+  /**
+   * 건수 카드: 사전규격 = 아직 본공고가 없는 사업, 파일 없음 = 제안요청서·과업지시서·규격서가 없는 사업,
+   * 제품 해당 = 첨부 요구사항 항목에서 제품 배지가 붙은 사업
+   */
   const TILE_FILTERS = {
-    all: { bid: 'all', doc: 'all' },
-    prespec: { bid: 'no', doc: 'all' },
-    bid: { bid: 'yes', doc: 'all' },
-    nofile: { bid: 'all', doc: 'none' },
+    all: { bid: 'all', doc: 'all', prod: 'all' },
+    prespec: { bid: 'no', doc: 'all', prod: 'all' },
+    bid: { bid: 'yes', doc: 'all', prod: 'all' },
+    nofile: { bid: 'all', doc: 'none', prod: 'all' },
+    product: { bid: 'all', doc: 'all', prod: 'any' },
   };
 
-  const activeTile = (c) => Object.keys(TILE_FILTERS)
-    .find((key) => TILE_FILTERS[key].bid === c.bid && TILE_FILTERS[key].doc === c.doc) ?? null;
+  const activeTile = (c) => Object.keys(TILE_FILTERS).find((key) => {
+    const f = TILE_FILTERS[key];
+    return f.bid === c.bid && f.doc === c.doc && f.prod === c.prod;
+  }) ?? null;
 
   function budgetPresetValue(c) {
     if (c.budgetMin === null && c.budgetMax === null) return '';
@@ -175,7 +181,7 @@
   }
 
   const hasFilters = (c) => Boolean(c.q || c.types.length || c.budgetMin !== null || c.budgetMax !== null
-    || c.bid !== 'all' || c.doc !== 'all');
+    || c.bid !== 'all' || c.doc !== 'all' || c.prod !== 'all');
 
   function renderFilters() {
     const c = state.criteria;
@@ -202,8 +208,15 @@
 
   // ---------- 카드 ----------
 
+  /** 사전규격 → 본공고. 예전에 게시된 데이터(stage 없음)도 본공고 연결 여부로 판단한다. */
+  const stageOf = (item) => item.stage ?? (item.bidNotices.length ? 'bid' : 'prespec');
+
   function docSection(item) {
     const nodes = [];
+    // 본공고가 나오면 사전규격 첨부 대신 본공고 첨부를 보여 준다.
+    if (item.docSource === 'bid') {
+      nodes.push(el('span', { className: 'doc-source', title: '사전규격 첨부를 지우고 본공고 첨부로 바꿨습니다', text: '본공고 첨부' }));
+    }
     if (['rfp', 'sow', 'spec'].includes(item.docKind)) {
       for (const f of item.docFiles) {
         nodes.push(el('a', { className: `file-link ${item.docKind}`, href: f.url, title: `${f.name} 내려받기` },
@@ -214,16 +227,28 @@
     } else {
       nodes.push(el('span', { className: 'badge warn', text: item.docLabel }));
     }
-    if (item.attachmentsFull) nodes.push(el('span', { className: 'badge warn', text: '첨부 5개 · 나라장터에서 추가 확인' }));
+    if (item.attachmentsFull) nodes.push(el('span', { className: 'badge warn', text: '첨부가 더 있을 수 있음 · 나라장터에서 확인' }));
     return nodes;
+  }
+
+  /** 제품 배지: 첨부 "요구사항" 항목에서 찾은 제품. 마우스를 올리면 근거 문장을 보여 준다. */
+  function productBadges(item) {
+    return (item.products || []).map((p) => {
+      const lines = [`${p.name} 관련 요구사항 (찾은 표현: ${p.terms.join(', ')})`];
+      for (const ev of p.evidence) lines.push(`· ${ev.text}`);
+      const files = [...new Set(p.evidence.map((ev) => ev.file).filter(Boolean))];
+      if (files.length) lines.push(`파일: ${files.join(', ')}`);
+      return el('span', { className: `badge product ${p.id}`, title: lines.join('\n'), tabindex: '0' },
+        [icon('target'), el('span', { text: p.name })]);
+    });
   }
 
   // ---------- 카드 [배정] ----------
 
-  /** 공개일시 아래: 관리 모드는 [배정] 버튼, 공유 사이트는 배정된 담당자 표시 */
+  /** 공개일시 아래 [배정] 버튼. PC가 꺼져 있을 때(보기 전용)는 배정된 담당자만 표시 */
   function assignControl(item) {
     const names = item.assignees.map((a) => a.name).join(', ');
-    if (!state.admin) {
+    if (!state.live) {
       return names ? el('span', { className: 'assigned', title: '배정된 담당자' }, [icon('user'), el('span', { text: names })]) : null;
     }
     const button = el('button', {
@@ -262,7 +287,7 @@
 
     const select = el('select', { 'aria-label': '담당자 선택' }, [
       el('option', { value: '', text: '선택', disabled: true, selected: true }),
-      ...state.adminStaff.map((s) => el('option', { value: String(s.id), text: s.name })),
+      ...state.staffOptions.map((s) => el('option', { value: String(s.id), text: s.name })),
       el('option', { value: UNASSIGNED, text: '미정' }),
     ]);
     const message = el('input', { type: 'text', maxlength: '200', placeholder: '간단한 지시사항 (선택)', 'aria-label': '지시사항' });
@@ -289,7 +314,7 @@
         return;
       }
       const unassign = select.value === UNASSIGNED;
-      const staff = state.adminStaff.find((s) => String(s.id) === select.value);
+      const staff = state.staffOptions.find((s) => String(s.id) === select.value);
       submit.disabled = true;
       try {
         await postJson(`api/items/${encodeURIComponent(item.bfSpecRgstNo)}/assign`, {
@@ -297,8 +322,8 @@
         });
         closeAssignPopover();
         showToast(unassign
-          ? '배정을 해제했습니다 (미정) · 잠시 후 공유 사이트에 반영됩니다'
-          : `${staff?.name ?? ''}님에게 배정했습니다 · 잠시 후 공유 사이트에 반영됩니다`);
+          ? '배정을 해제했습니다 (미정)'
+          : `${staff?.name ?? ''}님에게 배정했습니다`);
         await reloadData();
       } catch (err) {
         error.textContent = err.message;
@@ -333,7 +358,14 @@
       renderSelection();
     });
 
+    const stage = stageOf(item);
+    const bid = item.bidNotices[0];
     const meta = el('div', { className: 'card-meta' }, [
+      el('span', {
+        className: `badge stage ${stage}`,
+        title: stage === 'bid' ? `본공고 ${bid.bidNtceNo}${bid.ord ? `-${bid.ord}` : ''}${bid.title ? ` · ${bid.title}` : ''}` : '아직 본공고가 나오지 않은 사전규격',
+        text: stage === 'bid' ? '본공고' : '사전규격',
+      }),
       el('span', { className: 'badge type', text: item.businessType }),
       el('span', { className: 'agency', text: item.agency }),
       showDate ? el('span', { className: 'muted', text: `${dateLabel(item.listDate)} 목록` }) : null,
@@ -346,17 +378,19 @@
     ]);
 
     const title = el('h3', { className: 'card-title' },
-      el('a', { href: item.detailUrl, target: '_blank', rel: 'noopener', title: '나라장터 사전규격 상세 보기' },
-        [document.createTextNode(item.title), icon('external')]));
+      el('a', { href: item.detailUrl, target: '_blank', rel: 'noopener',
+        title: stage === 'bid' ? '나라장터 본공고 상세 보기' : '나라장터 사전규격 상세 보기' },
+      [document.createTextNode(item.title), icon('external')]));
 
-    const foot = el('div', { className: 'card-foot' });
+    const foot = el('div', { className: 'card-foot' }, productBadges(item));
     // 여러 키워드로 검색된 사업은 걸린 키워드를 모두 나열한다.
     for (const keyword of item.matchedKeywords) {
       foot.append(el('span', { className: 'badge keyword', title: '걸린 키워드', text: keyword }));
     }
-    if (item.bidNotices.length) {
-      foot.append(el('a', { className: 'badge bid', href: item.bidNotices[0].url, target: '_blank', rel: 'noopener',
-        text: item.bidNotices.length > 1 ? `본공고 ${item.bidNotices.length}건` : '본공고' }));
+    // 본공고로 바뀐 사업도 원래 사전규격 공고를 볼 수 있게 남긴다.
+    if (stage === 'bid') {
+      foot.append(el('a', { className: 'prespec-link', href: item.prespecUrl ?? item.detailUrl, target: '_blank', rel: 'noopener',
+        title: '나라장터 사전규격 상세 보기' }, [el('span', { text: '사전규격 보기' }), icon('external')]));
     }
     foot.append(...docSection(item));
 
@@ -371,7 +405,7 @@
       body,
     ]);
 
-    if (state.admin) {
+    if (state.live) {
       const del = el('button', { type: 'button', className: 'icon-btn card-delete', 'aria-label': `${item.title} 삭제`, title: '목록에서 삭제' },
         icon('trash'));
       del.addEventListener('click', () => confirmDelete(item));
@@ -409,6 +443,7 @@
       prespec: base.length - withBid,
       bid: withBid,
       nofile: base.filter((i) => i.docKind === 'none').length,
+      product: base.filter((i) => (i.products || []).length > 0).length,
     };
     for (const node of document.querySelectorAll('[data-count]')) node.textContent = counts[node.dataset.count];
   }
@@ -437,7 +472,7 @@
     if (token !== searchToken || state.view !== 'all') return;
 
     const all = lists.flat();
-    const base = all.filter((item) => S.matches(item, { ...c, bid: 'all', doc: 'all' }));
+    const base = all.filter((item) => S.matches(item, { ...c, bid: 'all', doc: 'all', prod: 'all' }));
     state.results = S.sortItems(base.filter((item) => S.matches(item, c)), c.sort);
     const visible = new Set(state.results.map((i) => i.bfSpecRgstNo));
     for (const key of [...state.selected]) if (!visible.has(key)) state.selected.delete(key);
@@ -576,10 +611,10 @@
 
   // ---------- 담당자별 ----------
 
-  /** 담당자 순서는 관리자 화면에 입력한 순서 (index.json이 그 순서로 온다) */
+  /** 담당자 순서는 조건 설정에 입력한 순서 (index.json이 그 순서로 온다) */
   function staffList() {
     const byId = new Map((state.index?.staff ?? []).map((s) => [s.id, { ...s }]));
-    for (const s of state.adminStaff) if (!byId.has(s.id)) byId.set(s.id, { id: s.id, name: s.name, count: 0 });
+    for (const s of state.staffOptions) if (!byId.has(s.id)) byId.set(s.id, { id: s.id, name: s.name, count: 0 });
     return [...byId.values()];
   }
 
@@ -602,7 +637,7 @@
       els.deliveries.replaceChildren();
       els.staffEmpty.hidden = false;
       els.staffEmptyTitle.textContent = '등록된 담당자가 없습니다';
-      els.staffEmptyDesc.textContent = state.admin ? '조건 설정 화면에서 담당자를 먼저 추가하세요.' : '관리자가 담당자를 등록하고 공고를 배정하면 여기에 표시됩니다.';
+      els.staffEmptyDesc.textContent = state.live ? '조건 설정 화면에서 담당자를 먼저 추가하세요.' : '조건 설정에서 담당자를 등록하면 여기에 표시됩니다.';
       els.staffCount.textContent = '0건';
       renderSelection();
       return;
@@ -625,7 +660,7 @@
           el('span', { className: 'muted', text: ` · 담당 ${d.staff.map((s) => s.name).join(', ')} · ${d.items.length}건` }),
         ]),
       ]);
-      if (state.admin) {
+      if (state.live) {
         const cancel = el('button', { type: 'button', className: 'link-btn danger-text', text: '전달 취소' });
         cancel.addEventListener('click', () => confirmCancelDelivery(d));
         head.append(cancel);
@@ -640,7 +675,7 @@
     const name = staff.find((s) => s.id === state.staffId)?.name ?? '';
     els.staffEmpty.hidden = total > 0;
     els.staffEmptyTitle.textContent = `${name}님에게 배정된 공고가 없습니다`;
-    els.staffEmptyDesc.textContent = state.admin ? '전체 목록에서 공고를 고른 뒤 "담당자 배정"을 누르세요.' : '관리자가 공고를 배정하면 여기에 표시됩니다.';
+    els.staffEmptyDesc.textContent = state.live ? '전체 목록에서 공고를 고른 뒤 "담당자 배정"을 누르세요.' : '공고에 담당자를 배정하면 여기에 표시됩니다.';
     els.staffCount.textContent = `${name} · ${total}건`;
     renderSelection();
   }
@@ -680,7 +715,7 @@
     els.clearSelection.hidden = n === 0;
     els.copy.disabled = unique === 0;
     els.excel.disabled = unique === 0;
-    els.assign.hidden = !state.admin || state.view !== 'all';
+    els.assign.hidden = !state.live || state.view !== 'all';
     els.assign.disabled = n === 0;
     els.assign.title = n === 0 ? '배정할 공고를 먼저 체크하세요' : '';
     const checkAll = state.view === 'all' ? els.checkAll : els.staffCheckAll;
@@ -740,7 +775,7 @@
     try {
       const ExcelJS = await loadExcelJs();
       const workbook = new ExcelJS.Workbook();
-      const sheet = workbook.addWorksheet('사전규격');
+      const sheet = workbook.addWorksheet('사업공고');
       sheet.columns = [
         { header: '번호', key: 'no', width: 6 },
         { header: '목록 날짜', key: 'listDate', width: 12 },
@@ -751,11 +786,13 @@
         { header: '업무구분', key: 'businessType', width: 10 },
         { header: '사전규격 공개일시', key: 'publishedAt', width: 19 },
         { header: '사전규격등록번호', key: 'bfSpecRgstNo', width: 17 },
-        { header: '본공고', key: 'bid', width: 8 },
+        { header: '구분', key: 'stageText', width: 9 },
+        { header: '입찰공고번호', key: 'bidNo', width: 17 },
         { header: '나라장터 링크', key: 'link', width: 14 },
         { header: '첨부 문서', key: 'attachmentStatus', width: 28 },
         { header: '담당자', key: 'assigneeNames', width: 16 },
         { header: '걸린 키워드', key: 'keywords', width: 18 },
+        { header: '제품 배지', key: 'productNames', width: 22 },
       ];
       sheet.getRow(1).font = { bold: true };
       sheet.views = [{ state: 'frozen', ySplit: 1 }];
@@ -763,10 +800,13 @@
         const row = sheet.addRow({
           ...item,
           no: items.length - i,
-          bid: item.bidNotices.length > 0 ? '본공고' : '',
-          link: { text: '사전규격 보기', hyperlink: item.detailUrl },
+          stageText: stageOf(item) === 'bid' ? '본공고' : '사전규격',
+          bidNo: item.bidNotices[0] ? `${item.bidNotices[0].bidNtceNo}${item.bidNotices[0].ord ? `-${item.bidNotices[0].ord}` : ''}` : '',
+          link: { text: stageOf(item) === 'bid' ? '본공고 보기' : '사전규격 보기', hyperlink: item.detailUrl },
+          attachmentStatus: `${item.docSource === 'bid' ? '[본공고 첨부] ' : ''}${item.attachmentStatus}`,
           assigneeNames: item.assignees.map((a) => a.name).join(', '),
           keywords: item.matchedKeywords.join(', '),
+          productNames: (item.products || []).map((p) => p.name).join(', '),
         });
         row.getCell('link').font = { color: { argb: 'FF1D4ED8' }, underline: true };
       });
@@ -777,7 +817,7 @@
         : c.from === c.to ? c.from : `${c.from}~${c.to}`;
       const link = el('a', {
         href: URL.createObjectURL(new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })),
-        download: `나라장터_사전규격_${suffix}.xlsx`,
+        download: `나라장터_사업공고_${suffix}.xlsx`,
       });
       document.body.append(link);
       link.click();
@@ -792,7 +832,7 @@
     }
   }
 
-  // ---------- 관리 모드: 삭제 · 배정 ----------
+  // ---------- 삭제 · 배정 (서버에 연결되어 있을 때) ----------
 
   /** 확인 창을 띄우고 확인을 누르면 action을 실행한다. */
   function confirmAction({ title, desc, okText, action }) {
@@ -818,14 +858,14 @@
       title: '공고를 삭제할까요?',
       desc: [
         el('strong', { className: 'confirm-target', text: `${item.agency} - ${item.title}` }),
-        el('span', { text: '목록과 공유 사이트에서 사라지고, 다음 수집 때도 다시 올라오지 않습니다. 배정된 담당자 화면에서도 빠집니다.' }),
+        el('span', { text: '목록에서 사라지고, 다음 수집 때도 다시 올라오지 않습니다. 배정된 담당자 화면에서도 빠집니다.' }),
         el('span', { className: 'muted small', text: '잘못 삭제했다면 조건 설정 화면의 "삭제한 공고"에서 되살릴 수 있습니다.' }),
       ],
       okText: '삭제',
       action: async () => {
         await postJson(`api/items/${encodeURIComponent(item.bfSpecRgstNo)}/delete`);
         state.selected.delete(item.bfSpecRgstNo);
-        showToast('삭제했습니다 · 잠시 후 공유 사이트에 반영됩니다');
+        showToast('삭제했습니다');
         await reloadData();
       },
     });
@@ -841,7 +881,7 @@
       okText: '전달 취소',
       action: async () => {
         await postJson(`api/deliveries/${delivery.id}/delete`);
-        showToast('전달을 취소했습니다 · 잠시 후 공유 사이트에 반영됩니다');
+        showToast('전달을 취소했습니다');
         await reloadData();
       },
     });
@@ -854,12 +894,12 @@
     const shown = items.slice(0, 5).map((i) => el('li', {}, [el('span', { className: 'muted', text: `${i.agency} · ` }), el('span', { text: i.title })]));
     if (items.length > 5) shown.push(el('li', { className: 'muted', text: `외 ${items.length - 5}건` }));
     els.assignItems.replaceChildren(...shown);
-    els.staffOptions.replaceChildren(...state.adminStaff.map((s) =>
+    els.staffOptions.replaceChildren(...state.staffOptions.map((s) =>
       el('label', { className: 'staff-option' }, [el('input', { type: 'checkbox', value: String(s.id) }), el('span', { text: s.name })])));
-    els.staffOptionsEmpty.hidden = state.adminStaff.length > 0;
+    els.staffOptionsEmpty.hidden = state.staffOptions.length > 0;
     els.assignMessage.value = '';
     els.assignError.hidden = true;
-    els.assignSubmit.disabled = state.adminStaff.length === 0;
+    els.assignSubmit.disabled = state.staffOptions.length === 0;
     els.assignDialog.showModal();
   }
 
@@ -875,10 +915,10 @@
     els.assignSubmit.disabled = true;
     try {
       await postJson('api/deliveries', { staffIds, numbers: items.map((i) => i.bfSpecRgstNo), message: els.assignMessage.value });
-      const names = state.adminStaff.filter((s) => staffIds.includes(s.id)).map((s) => s.name).join(', ');
+      const names = state.staffOptions.filter((s) => staffIds.includes(s.id)).map((s) => s.name).join(', ');
       els.assignDialog.close();
       state.selected.clear();
-      showToast(`${names}님에게 ${items.length}건을 전달했습니다 · 잠시 후 공유 사이트에 반영됩니다`);
+      showToast(`${names}님에게 ${items.length}건을 전달했습니다`);
       await reloadData();
     } catch (err) {
       els.assignError.textContent = err.message;
@@ -893,10 +933,11 @@
     cache.lists.clear();
     cache.deliveries = null;
     cache.suggest = null;
-    const [index, admin] = await Promise.all([getJson('data/index.json'), getJson('data/admin.json')]);
+    const [index, live] = await Promise.all([getJson('data/index.json'), getJson('data/live.json')]);
     state.index = index;
-    state.adminStaff = admin.staff ?? [];
+    state.staffOptions = live.staff ?? [];
     fillDates(index);
+    renderUpdated(index);
     if (state.view === 'all') await search(); else await renderStaffView();
   }
 
@@ -914,6 +955,13 @@
       ? '제한 없음' : `${won(settings.budgetMin) || '제한 없음'} ~ ${won(settings.budgetMax) || '제한 없음'}`;
     $('cond-budget').replaceChildren(el('span', { text: range }),
       el('span', { className: 'muted small', text: '· 예산이 비어 있거나 0·1원인 공고는 제외' }));
+    $('cond-products').replaceChildren(...(settings.products || []).flatMap((p) => [
+      el('dt', {}, [el('span', { className: `badge product ${p.id}` }, [icon('target'), el('span', { text: p.name })])]),
+      el('dd', {}, [
+        el('p', { className: 'muted small product-summary', text: p.summary }),
+        ...p.terms.map((t) => el('span', { className: 'badge term', text: t })),
+      ]),
+    ]));
   }
 
   // ---------- 이벤트 ----------
@@ -1032,26 +1080,60 @@
 
   // ---------- 시작 ----------
 
+  const shortDateTime = (text) => {
+    const d = text ? new Date(text.replace(' ', 'T')) : null;
+    return d && !Number.isNaN(d.getTime())
+      ? `${d.getMonth() + 1}월 ${d.getDate()}일 ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+      : '';
+  };
+
+  function renderUpdated(index) {
+    const collected = shortDateTime(index.collectedAt);
+    els.updated.textContent = collected ? `${collected} 수집` : '';
+  }
+
+  /** 서버(이 PC)가 켜져 있는지: GitHub 입구에서 서버 주소로 짧게 물어본다. */
+  async function serverAlive(serverUrl) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 4000);
+    try {
+      const res = await fetch(new URL('api/ping', serverUrl), { cache: 'no-store', signal: controller.signal });
+      return res.ok && (await res.json()).ok === true;
+    } catch {
+      return false;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   (async () => {
     showSkeleton(els.results);
-    // 관리 모드는 관리자 PC(localhost)에서만 열린다. 공유 사이트에서는 확인 요청 자체를 보내지 않는다.
-    const onAdminPc = ['localhost', '127.0.0.1'].includes(location.hostname);
-    const [index, settings, admin] = await Promise.all([
+    // 서버에서 열면 live: true. GitHub 입구에서 열면 서버 주소가 적혀 있어, 서버가 켜져 있으면 그리로 옮겨 간다.
+    const live = await getJson('data/live.json').catch(() => null);
+    if (!live?.live && live?.serverUrl) {
+      els.updated.textContent = '서버에 연결하는 중…';
+      if (await serverAlive(live.serverUrl)) {
+        location.replace(new URL(location.hash || '', live.serverUrl).href);
+        return;
+      }
+    }
+    const [index, settings] = await Promise.all([
       getJson('data/index.json'),
       getJson('data/settings.json').catch(() => null),
-      onAdminPc ? getJson('data/admin.json').catch(() => null) : null,
     ]);
     state.index = index;
-    state.admin = Boolean(admin?.admin);
-    state.adminStaff = admin?.staff ?? [];
-    els.adminBadge.hidden = !state.admin;
-    els.settingsLink.hidden = !state.admin;
-    document.body.classList.toggle('is-admin', state.admin);
-
-    const updated = index.updatedAt ? new Date(index.updatedAt.replace(' ', 'T')) : null;
-    els.updated.textContent = state.admin
-      ? '배정·삭제한 내용은 잠시 후 공유 사이트에 자동으로 게시됩니다'
-      : updated ? `${updated.getMonth() + 1}월 ${updated.getDate()}일 ${String(updated.getHours()).padStart(2, '0')}:${String(updated.getMinutes()).padStart(2, '0')} 갱신` : '';
+    state.live = Boolean(live?.live);
+    state.staffOptions = live?.staff ?? [];
+    els.settingsLink.hidden = !state.live;
+    document.body.classList.toggle('is-live', state.live);
+    if (!state.live) {
+      els.offlineText.textContent = live?.serverUrl
+        ? '서버 PC가 꺼져 있어 마지막으로 게시된 목록을 보기 전용으로 보여 줍니다. '
+          + '배정·삭제·조건 설정은 서버 PC가 켜지면 이 주소에서 다시 할 수 있습니다.'
+        : '보기 전용 목록입니다. 배정·삭제·조건 설정은 서버 PC에서 할 수 있습니다.';
+      els.offlineBanner.hidden = false;
+    }
+    renderUpdated(index);
     if (settings) renderConditions(settings); else els.openConditions.hidden = true;
 
     fillDates(index);

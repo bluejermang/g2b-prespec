@@ -8,9 +8,12 @@
   function emptyCriteria(latestDate) {
     return {
       from: latestDate || '', to: latestDate || '', q: '', types: [], budgetMin: null, budgetMax: null,
-      bid: 'all', doc: 'all', sort: 'default',
+      bid: 'all', doc: 'all', prod: 'all', sort: 'default',
     };
   }
+
+  /** 제품 배지 조건: all | any(배지가 하나라도 있는 공고) | 제품 id */
+  const isProd = (value) => typeof value === 'string' && /^[a-z0-9-]{1,30}$/.test(value);
 
   function toNumberOrNull(value) {
     const cleaned = String(value ?? '').replace(/[,\s]/g, '');
@@ -29,6 +32,7 @@
     if (c.budgetMax !== null) params.set('max', String(c.budgetMax));
     if (c.bid !== 'all') params.set('bid', c.bid);
     if (c.doc !== 'all') params.set('doc', c.doc);
+    if (c.prod && c.prod !== 'all') params.set('prod', c.prod);
     if (c.sort !== 'default') params.set('sort', c.sort);
     return `#${params.toString()}`;
   }
@@ -54,6 +58,7 @@
     c.budgetMax = toNumberOrNull(params.get('max'));
     if (BID.includes(params.get('bid'))) c.bid = params.get('bid');
     if (DOC.includes(params.get('doc'))) c.doc = params.get('doc');
+    if (isProd(params.get('prod'))) c.prod = params.get('prod');
     if (SORTS.includes(params.get('sort'))) c.sort = params.get('sort');
     return c;
   }
@@ -88,6 +93,9 @@
     if (c.bid === 'yes' && !hasBid) return false;
     if (c.bid === 'no' && hasBid) return false;
     if (c.doc !== 'all' && item.docKind !== c.doc) return false;
+    const products = item.products || [];
+    if (c.prod === 'any' && !products.length) return false;
+    if (c.prod && c.prod !== 'all' && c.prod !== 'any' && !products.some((p) => p.id === c.prod)) return false;
     return true;
   }
 

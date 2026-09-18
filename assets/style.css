@@ -20,6 +20,8 @@
   --red-weak: #fff1ec;
   --sow: #7c3aed;
   --sow-weak: #f3edff;
+  --prod: #be185d;
+  --prod-weak: #fdf0f6;
   --focus: 0 0 0 3px rgba(37, 99, 235, 0.35);
   --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
   --shadow-lg: 0 10px 30px rgba(16, 24, 40, 0.12);
@@ -53,6 +55,8 @@
     --red-weak: #3a2019;
     --sow: #b69cff;
     --sow-weak: #2a2142;
+    --prod: #f59ac6;
+    --prod-weak: #3a1a2b;
     --focus: 0 0 0 3px rgba(109, 155, 255, 0.45);
     --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.45);
     color-scheme: dark;
@@ -89,10 +93,6 @@ button, input, select { font: inherit; color: inherit; letter-spacing: inherit; 
   border-bottom: 1px solid var(--line);
 }
 .header-inner { min-height: var(--header-h); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.admin-badge {
-  display: inline-flex; align-items: center; height: 20px; padding: 0 7px; margin-left: 4px; vertical-align: 2px;
-  border-radius: 999px; background: var(--amber-weak); color: var(--amber); font-size: 11px; font-weight: 700;
-}
 .view-tabs { display: inline-flex; gap: 2px; padding: 3px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; }
 .view-tab {
   border: 0; background: transparent; padding: 6px 14px; border-radius: 7px; color: var(--muted);
@@ -207,7 +207,7 @@ select {
 .unit { font-size: 13px; }
 
 /* ---------- 요약 타일 ---------- */
-.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 16px 0 12px; }
+.tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 16px 0 12px; }
 .tile {
   display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 12px 14px; text-align: left;
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); cursor: pointer;
@@ -220,6 +220,7 @@ select {
 .tile.warn .tile-value { color: var(--amber); }
 .tile.accent .tile-value { color: var(--accent); }
 .tile.danger .tile-value { color: var(--red); }
+.tile.product .tile-value { color: var(--prod); }
 .tile[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-weak); box-shadow: 0 0 0 1px var(--accent); }
 
 /* ---------- 결과 목록 ---------- */
@@ -250,7 +251,7 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent);
   min-width: 22px; text-align: left; font-size: 13px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums;
 }
 .card-body { flex: 1; min-width: 0; padding: 13px 16px 13px 14px; display: grid; gap: 4px; }
-.is-admin .card-body { padding-right: 52px; }
+.is-live .card-body { padding-right: 52px; }
 .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 13px; color: var(--muted); min-width: 0; }
 .card-meta .agency { color: var(--text-2); font-weight: 600; }
@@ -306,11 +307,19 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent);
   border: 1px solid var(--line);
 }
 .badge.type { background: transparent; }
+/* 사전규격 / 본공고 (건수 카드 색과 같게) */
+.badge.stage { font-weight: 750; border-color: transparent; }
+.badge.stage.prespec { background: var(--green-weak); color: var(--green); }
+.badge.stage.bid { background: var(--accent); color: var(--accent-text); }
 .badge.keyword { background: var(--accent-weak); color: var(--accent); border-color: transparent; }
 .badge.bid { background: var(--green-weak); color: var(--green); border-color: transparent; text-decoration: none; }
 .badge.bid:hover { text-decoration: underline; }
 .badge.warn { background: var(--amber-weak); color: var(--amber); border-color: transparent; }
 .badge.keyword { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+/* 제품 배지: 첨부 요구사항 항목에서 찾은 우리 제품 (마우스를 올리면 근거) */
+.badge.product { background: var(--prod-weak); color: var(--prod); border-color: color-mix(in srgb, var(--prod) 35%, transparent); font-weight: 750; cursor: help; }
+.badge.product .icon { width: 13px; height: 13px; }
+.badge.term { background: var(--surface-2); }
 
 .file-link {
   display: inline-flex; align-items: center; gap: 5px; max-width: 360px; height: 28px; padding: 0 10px;
@@ -322,6 +331,10 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent);
 .file-link.rfp .icon { color: var(--green); }
 .file-link.sow .icon { color: var(--sow); }
 .file-link.spec .icon { color: var(--text-2); }
+.prespec-link { display: inline-flex; align-items: center; gap: 3px; font-size: 12.5px; font-weight: 600; color: var(--muted); text-decoration: none; }
+.prespec-link:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.prespec-link .icon { width: 12px; height: 12px; }
+.doc-source { font-size: 12px; font-weight: 700; color: var(--accent); }
 .doc-none { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--muted); }
 .doc-none .icon { width: 15px; height: 15px; }
 
@@ -422,6 +435,8 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent);
 .conditions { display: grid; grid-template-columns: 64px 1fr; gap: 12px; margin: 0; }
 .conditions dt { font-size: 13px; color: var(--muted); font-weight: 600; padding-top: 2px; }
 .conditions dd { margin: 0; display: flex; flex-wrap: wrap; gap: 5px; }
+.conditions.products { grid-template-columns: 112px 1fr; margin-top: 10px; }
+.product-summary { flex-basis: 100%; margin: 0 0 2px; }
 .copy-sample { margin: 0 0 6px; padding: 10px 12px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-sm); font-weight: 600; }
 .copy-sample u { color: var(--accent); text-underline-offset: 3px; }
 
@@ -436,3 +451,7 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent);
 
 /* PC 화면 전용: 창을 좁혀도 배치가 무너지지 않게 최소 폭을 둔다 (좁으면 가로 스크롤) */
 body { min-width: 1100px; }
+
+/* ---------- 서버 PC가 꺼져 있을 때 (보기 전용) ---------- */
+.offline-banner { background: var(--amber-weak); color: var(--amber); border-bottom: 1px solid color-mix(in srgb, var(--amber) 30%, transparent); }
+.offline-banner .wrap { display: flex; align-items: center; gap: 8px; padding-top: 9px; padding-bottom: 9px; font-size: 13px; font-weight: 600; }
