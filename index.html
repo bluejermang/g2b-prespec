@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>나라장터 사업공고 수집 자동화</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+  <style>
+    :root { --bg:#f5f6f8; --surface:#fff; --text:#111827; --muted:#6b7280; --line:#e5e7eb; --accent:#2563eb; --amber:#a15c07; --amber-weak:#fff6e5;
+      font-family:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif; color-scheme:light; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--bg); color:var(--text); font-size:15px; line-height:1.6; }
+    main { width:min(520px, calc(100% - 32px)); padding:32px; background:var(--surface); border:1px solid var(--line); border-radius:14px; text-align:center; }
+    h1 { margin:0 0 18px; font-size:19px; }
+    .state { margin:0 0 6px; font-size:17px; font-weight:700; }
+    .desc { margin:0 0 18px; color:var(--muted); }
+    .off .state { color:var(--amber); }
+    .spinner { width:22px; height:22px; margin:0 auto 12px; border:3px solid var(--line); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
+    .off .spinner { display:none; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { .spinner { animation:none; } }
+    button { padding:9px 18px; border-radius:8px; border:1px solid var(--accent); background:var(--accent); color:#fff; font:inherit; font-weight:700; cursor:pointer; }
+    button[hidden] { display:none; }
+    .checked { margin:12px 0 0; font-size:12.5px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <main id="box" aria-live="polite">
+    <h1>📋 나라장터 사업공고 수집 자동화</h1>
+    <div class="spinner" aria-hidden="true"></div>
+    <p class="state" id="state">서버에 연결하는 중…</p>
+    <p class="desc" id="desc">잠시만 기다려 주세요.</p>
+    <button type="button" id="retry" hidden>다시 시도</button>
+    <p class="checked" id="checked"></p>
+  </main>
+  <script>
+    // 이 페이지는 입구만 한다: 서버 PC가 켜져 있으면 그 PC의 서버 주소로 옮겨 가고, 꺼져 있으면 안내만 한다.
+    // 서버 주소(data/live.json)는 서버가 켜지면서 새 주소를 받을 때마다 자동으로 바뀐다.
+    var RETRY_MS = 30000;
+    var box = document.getElementById('box');
+    var stateEl = document.getElementById('state');
+    var descEl = document.getElementById('desc');
+    var retry = document.getElementById('retry');
+    var checked = document.getElementById('checked');
+    var timer = null;
+
+    function withTimeout(ms) {
+      var controller = new AbortController();
+      setTimeout(function () { controller.abort(); }, ms);
+      return controller.signal;
+    }
+
+    function serverAlive(url) {
+      return fetch(new URL('api/ping', url), { cache: 'no-store', signal: withTimeout(5000) })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (data) { return Boolean(data && data.ok); })
+        .catch(function () { return false; });
+    }
+
+    function showOff(hasServer) {
+      box.className = 'off';
+      stateEl.textContent = '지금은 접속할 수 없습니다';
+      descEl.textContent = hasServer
+        ? '서버 PC가 꺼져 있거나 켜지는 중입니다. PC가 켜지면 1~3분 안에 자동으로 연결됩니다.'
+        : '아직 서버 PC가 연결된 적이 없습니다. 서버 PC를 켜 주세요.';
+      retry.hidden = false;
+      var now = new Date();
+      checked.textContent = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0')
+        + ' 확인 · 30초마다 다시 확인합니다';
+    }
+
+    function check() {
+      clearTimeout(timer);
+      fetch('data/live.json?t=' + Date.now(), { cache: 'no-store' })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .catch(function () { return null; })
+        .then(function (live) {
+          var url = live && live.serverUrl;
+          if (!url) return showOff(false);
+          return serverAlive(url).then(function (alive) {
+            if (alive) {
+              stateEl.textContent = '서버로 이동합니다…';
+              location.replace(new URL(location.hash || '', url).href); // 공유한 검색 조건(#…)도 그대로 넘긴다
+            } else {
+              showOff(true);
+            }
+          });
+        })
+        .then(function () { if (box.className === 'off') timer = setTimeout(check, RETRY_MS); });
+    }
+
+    retry.addEventListener('click', function () {
+      box.className = '';
+      stateEl.textContent = '서버에 연결하는 중…';
+      descEl.textContent = '잠시만 기다려 주세요.';
+      retry.hidden = true;
+      check();
+    });
+    check();
+  </script>
+</body>
+</html>
